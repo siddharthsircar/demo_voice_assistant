@@ -71,7 +71,11 @@ def run_jarvis():
     print(f'User: {command}')
 
     # Logic for executing tasks based on commands
-    if 'time' in command:
+
+    if 'wake up' in command or 'wakeup' in command:
+        speak('Hello sir. I am online.')
+
+    elif 'time' in command:
         time = datetime.datetime.now().strftime('%I:%M %p')
         speak(f'It is {time}')
 
@@ -100,7 +104,7 @@ def run_jarvis():
             query = takeCommand()
             search_google(query)
 
-    elif  'run a search on' in command:
+    elif 'run a search on' in command:
         try:
             query = command.replace('run a search on', '')
             search_google(query)
@@ -109,7 +113,7 @@ def run_jarvis():
             query = takeCommand()
             search_google(query)
 
-    elif 'open' in command:
+    elif 'open' in command or 'i want to work on' in command or 'i want to build' in command:
         open_module.open_module(command)
 
     elif 'play' in command:
@@ -126,7 +130,8 @@ def run_jarvis():
     elif 'tell me a joke' in command:
         speak(pyjokes.get_joke())
 
-    elif 'goodnight' in command or 'good night' in command or 'thank you' in command or 'thankyou' in command:
+    elif 'goodnight' in command or 'good night' in command or 'good bye' in command or \
+            'goodbye' in command or 'bye' in command or 'thank you' in command or 'thankyou' in command:
         gratitude_module.gratitude_module(command)
 
     elif 'none' in command:

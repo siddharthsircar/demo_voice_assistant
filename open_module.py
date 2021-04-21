@@ -9,7 +9,12 @@ def open_module(command):
 
     elif 'open google' in command:
         jarvis.speak('opening google')
-        webbrowser.open('www.google.com')
+        try:
+            jarvis.speak('What should I search for?')
+            query = jarvis.takeCommand()
+            jarvis.search_google(query)
+        except:
+            webbrowser.open('www.google.com')
 
     elif 'open facebook' in command:
         jarvis.speak('opening facebook')
@@ -31,7 +36,7 @@ def open_module(command):
         jarvis.speak('Opening file explorer')
         os.system('explorer')
 
-    elif 'open vs code' in command:
+    elif 'open vs code' in command or 'i want to work on flutter' in command:
         try:
             vsCodePath = 'S:\\Development\\Tools\\Microsoft VS Code\\Code.exe'
             jarvis.speak('Opening VS Code')
