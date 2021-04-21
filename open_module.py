@@ -12,7 +12,10 @@ def open_module(command):
         try:
             jarvis.speak('What should I search for?')
             query = jarvis.takeCommand()
-            jarvis.search_google(query)
+            if 'none' in query or query is None:
+                webbrowser.open('www.google.com')
+            elif query is not None:
+                jarvis.search_google(query)
         except:
             webbrowser.open('www.google.com')
 
@@ -21,8 +24,8 @@ def open_module(command):
         webbrowser.open('www.gmail.com')
 
     elif 'open whatsapp' in command:
-        jarvis.speak('opening gmail')
-        webbrowser.open('web.whatsapp.com')
+        jarvis.speak('opening whatsapp')
+        webbrowser.open('https://web.whatsapp.com/')
 
     elif 'open facebook' in command:
         jarvis.speak('opening facebook')

@@ -48,8 +48,7 @@ def takeCommand():
             command = listener.recognize_google(audio, language='en-in')
         except Exception as e:
             print(e)
-            print('I did not get you!')
-            return 'None'
+            return 'none'
         return command
 
 def search_google(query):
@@ -146,7 +145,7 @@ def run_jarvis():
             'goodbye' in command or 'bye' in command or 'thank you' in command or 'thankyou' in command:
         gratitude_module.gratitude_module(command)
 
-    elif 'none' in command:
+    elif 'none' in command or command is None:
         pass
 
     else:
