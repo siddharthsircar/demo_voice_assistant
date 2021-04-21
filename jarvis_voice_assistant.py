@@ -39,13 +39,13 @@ def takeCommand():
     '''
     listener = sr.Recognizer()
     with sr.Microphone() as source:
-        listener.adjust_for_ambient_noise(source, duration=0.2)
+        listener.adjust_for_ambient_noise(source)
         print("Listening...")
         # listener.pause_threshold = 1
         audio = listener.listen(source)
         try:
             print('Recognizing...')
-            command = listener.recognize_google(audio)
+            command = listener.recognize_google(audio, language='en-in')
         except Exception as e:
             print(e)
             print('I did not get you!')
@@ -77,7 +77,19 @@ def run_jarvis():
 
     elif 'time' in command:
         time = datetime.datetime.now().strftime('%I:%M %p')
-        speak(f'It is {time}')
+        speak(f'It\'s {time}')
+        hour = int(datetime.datetime.now().hour)
+        if hour >= 0 and hour < 4:
+            speak('you should go to sleep now sir. It\'s pretty late')
+
+    elif 'date' in command:
+        today = datetime.date.today()
+        speak(f'It\'s {today}')
+
+    elif 'day' in command:
+        day_name = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        day = datetime.datetime.today(). weekday()
+        speak(f'It\'s {day_name[day]}')
 
     elif 'who is' in command:
         speak('Asking Wiki..')

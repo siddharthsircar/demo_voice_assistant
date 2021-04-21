@@ -16,6 +16,14 @@ def open_module(command):
         except:
             webbrowser.open('www.google.com')
 
+    elif 'open mail' in command:
+        jarvis.speak('opening gmail')
+        webbrowser.open('www.gmail.com')
+
+    elif 'open whatsapp' in command:
+        jarvis.speak('opening gmail')
+        webbrowser.open('web.whatsapp.com')
+
     elif 'open facebook' in command:
         jarvis.speak('opening facebook')
         webbrowser.open('www.facebook.com')
