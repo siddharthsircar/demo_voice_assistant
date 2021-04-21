@@ -49,6 +49,10 @@ def takeCommand():
             return 'None'
         return command
 
+def search_google(query):
+    speak(f'Searching google for {query}')
+    pywhatkit.search(query)
+
 def run_jarvis():
     command = takeCommand().lower()
     if 'hey' in command:
@@ -86,10 +90,20 @@ def run_jarvis():
         try:
             speak('What should I search for?')
             query = takeCommand()
-            speak(f'Searching for {query}')
-            pywhatkit.search(query)
+            search_google(query)
         except:
-            speak('Unable to search.')
+            speak('Could you please repeat')
+            query = takeCommand()
+            search_google(query)
+
+    elif  'do a search on' in command:
+        try:
+            query = command.replace('do a search on', '')
+            search_google(query)
+        except:
+            speak('What should I search for?')
+            query = takeCommand()
+            search_google(query)
 
     elif 'covid status in india' in command:
         pass
@@ -185,7 +199,7 @@ def run_jarvis():
     elif 'thank you' in command or 'thankyou' in command:
         speak('Always at your service sir!')
 
-    elif 'how are you today' in command:
+    elif 'how are you' in command:
         speak('I have been good. Thank you for asking.')
 
     elif 'tell me a joke' in command:
