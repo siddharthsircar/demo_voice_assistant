@@ -11,12 +11,7 @@ import pywhatkit
 import speech_recognition as sr
 import wikipedia
 
-import close_module
-import gratitude_module
-import location_module
-import math_module
-import news_module
-import open_module
+from modules import news_module, gratitude_module, open_module, math_module, close_module, location_module
 
 engine = pyttsx3.init('sapi5')
 rate = engine.getProperty('rate')
@@ -30,14 +25,26 @@ def speak(audio):
 def greetMe():
     hour = int(datetime.datetime.now().hour)
     startTime = time.strftime("%I:%M %p")
-    if hour >= 0 and hour < 12:
+    if hour >= 5 and hour < 10:
+        speak(f'Good Morning Sir')
+        speak(f'You are up early, It\'s {startTime}')
+
+    if hour >= 10 and hour < 12:
         speak(f'Good Morning Sir, It\'s {startTime}')
+
     elif hour >= 12 and hour < 16:
         speak(f'Good Afternoon Sir, It\'s {startTime}')
-    else:
+
+    elif hour >= 16 and hour <= 22:
         speak(f'Good Evening Sir, It\'s {startTime}')
 
-    speak("All systems online.")
+    elif (hour >= 23 and hour < 24) or (hour >= 0 and hour < 5):
+        speak('It\'s time to sleep sir.')
+        speak(f'It\'s {startTime}')
+        speak('Still, bringing all systems online')
+
+    if (hour >= 5 and hour < 23):
+        speak('All systems online')
 
 def takeCommand():
     '''
@@ -49,8 +56,8 @@ def takeCommand():
         print("Listening...")
         listener.adjust_for_ambient_noise(source)
         listener.pause_threshold = 1
-        audio = listener.listen(source, timeout=4, phrase_time_limit=7)
         try:
+            audio = listener.listen(source, timeout=4, phrase_time_limit=7)
             print('Recognizing...')
             command = listener.recognize_google(audio) # , language='en-in'
         except Exception as e:
@@ -183,6 +190,9 @@ def run_jarvis():
         elif 'who are you' in command:
             speak('I am Batman')
 
+        elif 'are you up' in command:
+            speak('I am here sir.')
+
         elif 'how are you' in command:
             speak('I have been good. Thank you for asking.')
             speak('How have you been lately?')
@@ -207,17 +217,21 @@ def run_jarvis():
         elif 'thank you' in command or 'thankyou' in command:
             speak('Always at your service sir!')
 
+        elif 'i didn\'t sleep' in command:
+            speak('One should have sleep for an average of 6 or 7 hours')
+            speak('you should take care of your health sir!')
+
         elif 'you can sleep' in command or 'you may go to sleep' in command or 'go to sleep' in command:
             speak('Okay sir, Let me know when you need me.')
             break
 
         elif 'you can go' in command:
             speak('Good bye sir')
-            sys.exit()
+            break
 
         elif 'goodnight' in command or 'good night' in command or 'good bye' in command or \
                 'goodbye' in command or 'bye' in command or 'thank you' in command or 'thankyou' in command:
-            speak('Okay sir, Let me know when you need me.')
+            speak('Bye sir, let me know when you need me.')
             break
 
         elif 'i\'m going out' in command or 'i am going out' in command or 'see you' in command or \
@@ -243,29 +257,3 @@ def run_jarvis():
 
         else:
             speak('I did not quite get you.')
-
-
-if __name__ == "__main__":
-    # greetMe()
-    # while True:
-    #     run_jarvis()
-    while True:
-        permission = takeCommand()
-        if 'wake up' in permission or 'wakeup' in permission:
-            speak('Please let me sleep sir, I\'m tired')
-            response = takeCommand().lower()
-            if 'ok' in response or 'sleep' in response:
-                speak('Thank you. I\'ll be up in a few moments')
-                time.sleep(15)
-            elif 'no' in response or 'wake up' in response or 'wakeup' in response:
-                speak('Okay. I\'m up.')
-                run_jarvis()
-
-        elif 'you can go' in permission:
-            speak('Good bye sir')
-            sys.exit()
-
-        elif 'goodnight' in permission or 'good night' in permission or 'good bye' in permission or \
-                'goodbye' in permission or 'bye' in permission or 'thank you' in permission or \
-                'thankyou' in permission:
-            gratitude_module.gratitude_module(permission)
