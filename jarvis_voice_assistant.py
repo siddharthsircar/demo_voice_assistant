@@ -1,5 +1,7 @@
 import os
+import time
 
+import pyautogui
 import pyjokes
 import pyttsx3
 import datetime
@@ -7,12 +9,13 @@ import datetime
 import pywhatkit
 import speech_recognition as sr
 import wikipedia
-import webbrowser
 
+import close_module
 import gratitude_module
+import news_module
 import open_module
 
-engine = pyttsx3.init()
+engine = pyttsx3.init('sapi5')
 rate = engine.getProperty('rate')
 engine.setProperty('rate', rate-20)
 
@@ -23,12 +26,13 @@ def speak(audio):
 
 def greetMe():
     hour = int(datetime.datetime.now().hour)
+    startTime = time.strftime("%I:%M %p")
     if hour >= 0 and hour < 12:
-        speak("Good Morning Sir!")
+        speak(f'Good Morning Sir, It\'s {startTime}')
     elif hour >= 12 and hour < 18:
-        speak("Good Afternoon Sir!")
+        speak(f'Good Afternoon Sir, It\'s {startTime}')
     else:
-        speak("Good Evening Sir!")
+        speak(f'Good Evening Sir, It\'s {startTime}')
 
     speak("All systems online.")
 
@@ -41,8 +45,8 @@ def takeCommand():
     with sr.Microphone() as source:
         listener.adjust_for_ambient_noise(source)
         print("Listening...")
-        # listener.pause_threshold = 1
-        audio = listener.listen(source)
+        listener.pause_threshold = 1
+        audio = listener.listen(source, timeout=5, phrase_time_limit=5)
         try:
             print('Recognizing...')
             command = listener.recognize_google(audio, language='en-in')
@@ -72,7 +76,12 @@ def run_jarvis():
     # Logic for executing tasks based on commands
 
     if 'wake up' in command or 'wakeup' in command:
-        speak('Hello sir. I am online.')
+        speak('Please let me sleep, I\'m tired')
+        response = takeCommand().lower()
+        if 'ok' in response or 'sleep' in response:
+            speak('Thank you. I\'ll be up in a few minutes')
+        elif 'no' in response or 'wake up' in response or 'wakeup' in response:
+            speak('Uhhhhhh. I\'m up.')
 
     elif 'time' in command:
         time = datetime.datetime.now().strftime('%I:%M %p')
@@ -84,6 +93,21 @@ def run_jarvis():
     elif 'date' in command:
         today = datetime.date.today()
         speak(f'It\'s {today}')
+
+    elif 'news' in command or 'headlines' in command:
+        speak('Fetching the latest news')
+        if 'headlines' in command:
+            news_module.get_news()
+        else:
+            news_module.get_news()
+            speak('Do you wish to know more about a certain headline?')
+            response = takeCommand().lower()
+            if 'yes' in response or 'yup' in response or 'yeah' in response:
+                speak('Which one?')
+                response = takeCommand().lower()
+                news_module.get_specific_news(response)
+            elif 'no' in command or 'nope' in command or 'nah' in command:
+                speak('Ok sir.')
 
     elif 'day' in command:
         day_name = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -127,6 +151,9 @@ def run_jarvis():
     elif 'open' in command or 'i want to work on' in command or 'i want to build' in command:
         open_module.open_module(command)
 
+    elif 'close' in command or 'i am done with' in command:
+        close_module.close_module(command)
+
     elif 'play' in command:
         song = command.replace('play', '')
         speak('Playing' + song)
@@ -141,9 +168,26 @@ def run_jarvis():
     elif 'tell me a joke' in command:
         speak(pyjokes.get_joke())
 
+    elif 'i\'m going out' in command or 'i am going out' in command or 'see you' in command or 'sleep' in command:
+        speak('Sir, are you leaving?')
+        response = takeCommand().lower()
+        if 'yes' in response or 'yup' in response or 'yeah' in response:
+            speak('Good Bye sir. Putting all systems to sleep')
+            os.system('rundll32.exe powrprof.dll,SetSuspendState 0,1,0')
+
     elif 'goodnight' in command or 'good night' in command or 'good bye' in command or \
             'goodbye' in command or 'bye' in command or 'thank you' in command or 'thankyou' in command:
         gratitude_module.gratitude_module(command)
+
+    elif 'shutdown' in command or 'shut down' in command or ('shut' and 'down' in command):
+        speak('All systems going offline.')
+        speak('Good Bye sir.')
+        os.system('shutdown /s /t 5')
+
+    elif 'restart' in command or 'reboot' in command:
+        speak('Resetting all systems')
+        speak('See you soon sir.')
+        os.system('shutdown /r /t 5')
 
     elif 'none' in command or command is None:
         pass

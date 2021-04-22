@@ -47,6 +47,18 @@ def open_module(command):
         jarvis.speak('Opening file explorer')
         os.system('explorer')
 
+    # elif 'camera' in command:
+    #     try:
+    #         cap = cv2.VideoCapture(0)
+    #         while True:
+    #             ret, img = cap.read()
+    #             cv2.imshow('webcam', img)
+    #             k = cv2.waitKey(50)
+    #             if k==27:
+    #                 break;
+    #         cap.release()
+    #         cv2.destroyAllWindows()
+
     elif 'open vs code' in command or 'i want to work on flutter' in command:
         try:
             vsCodePath = 'S:\\Development\\Tools\\Microsoft VS Code\\Code.exe'
@@ -63,7 +75,7 @@ def open_module(command):
         except:
             jarvis.speak('Could not find Android Studio in given location')
 
-    elif 'open sublime' in command or 'open text editor' in command:
+    elif 'open sublime' in command or 'open note pad' in command or 'open notepad' in command:
         try:
             sublimePath = 'C:\\Program Files\\Sublime Text 3\\sublime_text.exe'
             jarvis.speak('Opening Sublime Text editor')
