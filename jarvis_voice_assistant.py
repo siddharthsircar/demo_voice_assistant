@@ -11,7 +11,9 @@ import pywhatkit
 import speech_recognition as sr
 import wikipedia
 
-from modules import news_module, gratitude_module, open_module, math_module, close_module, location_module
+from modules import news_module, open_module, math_module, close_module, location_module, \
+    weather_module, how_to_module
+from modules.search_module import search_google, search_wiki
 
 engine = pyttsx3.init('sapi5')
 rate = engine.getProperty('rate')
@@ -22,29 +24,31 @@ def speak(audio):
     engine.say(audio)
     engine.runAndWait()
 
-def greetMe():
-    hour = int(datetime.datetime.now().hour)
-    startTime = time.strftime("%I:%M %p")
-    if hour >= 5 and hour < 10:
-        speak(f'Good Morning Sir')
-        speak(f'You are up early, It\'s {startTime}')
+def greetMe(counter):
+    if counter==1:
+        hour = int(datetime.datetime.now().hour)
+        startTime = time.strftime("%I:%M %p")
+        if hour >= 5 and hour < 10:
+            speak(f'Good Morning Sir')
+            speak(f'You are up early, It\'s {startTime}')
 
-    if hour >= 10 and hour < 12:
-        speak(f'Good Morning Sir, It\'s {startTime}')
+        if hour >= 10 and hour < 12:
+            speak(f'Good Morning Sir, It\'s {startTime}')
 
-    elif hour >= 12 and hour < 16:
-        speak(f'Good Afternoon Sir, It\'s {startTime}')
+        elif hour >= 12 and hour < 16:
+            speak(f'Good Afternoon Sir, It\'s {startTime}')
 
-    elif hour >= 16 and hour <= 22:
-        speak(f'Good Evening Sir, It\'s {startTime}')
+        elif hour >= 16 and hour <= 22:
+            speak(f'Good Evening Sir, It\'s {startTime}')
 
-    elif (hour >= 23 and hour < 24) or (hour >= 0 and hour < 5):
-        speak('It\'s time to sleep sir.')
-        speak(f'It\'s {startTime}')
-        speak('Still, bringing all systems online')
+        elif (hour >= 23 and hour < 24) or (hour >= 0 and hour < 5):
+            speak(f'It is {startTime}')
+            speak('Still, bringing all systems online')
 
-    if (hour >= 5 and hour < 23):
-        speak('All systems online')
+        if (hour >= 5 and hour < 23):
+            speak('All systems online')
+    else:
+        speak('I am up.')
 
 def takeCommand():
     '''
@@ -65,16 +69,8 @@ def takeCommand():
         command = command.lower()
         return command
 
-def search_google(query):
-    speak(f'Searching for {query}')
-    pywhatkit.search(query)
-
-def search_wiki(query):
-    result = wikipedia.summary(query, sentences=1)
-    speak(result)
-
-def run_jarvis():
-    greetMe()
+def run_jarvis(counter):
+    greetMe(counter)
     while True:
         command = takeCommand().lower()
         if 'hey' in command:
@@ -87,6 +83,7 @@ def run_jarvis():
 
         # Logic for executing tasks based on commands
 
+        ##### Information Tasks
         if 'time' in command:
             time = datetime.datetime.now().strftime('%I:%M %p')
             speak(f'It\'s {time}')
@@ -102,20 +99,26 @@ def run_jarvis():
                 or 'location' in command or 'locate us' in command:
             location_module.get_current_location()
 
+        elif 'temperature' in command or 'weather' in command:
+            weather_module.get_weather()
+
         elif 'news' in command or 'headlines' in command:
             speak('Fetching the latest news')
-            if 'headlines' in command:
-                news_module.get_news()
-            else:
-                news_module.get_news()
-                speak('Do you wish to know more about a certain headline?')
-                response = takeCommand().lower()
-                if 'yes' in response or 'yup' in response or 'yeah' in response:
-                    speak('Which one?')
+            try:
+                if 'headlines' in command:
+                    news_module.get_news()
+                else:
+                    news_module.get_news()
+                    speak('Do you wish to know more about a certain headline?')
                     response = takeCommand().lower()
-                    news_module.get_specific_news(response)
-                elif 'no' in command or 'nope' in command or 'nah' in command:
-                    speak('Ok sir.')
+                    if 'yes' in response or 'yup' in response or 'yeah' in response:
+                        speak('Which one?')
+                        response = takeCommand().lower()
+                        news_module.get_specific_news(response)
+                    elif 'no' in command or 'nope' in command or 'nah' in command:
+                        speak('Ok sir.')
+            except:
+                speak('Sorry sir, could not find latest news.')
 
         elif 'day' in command:
             day_name = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -123,17 +126,14 @@ def run_jarvis():
             speak(f'It\'s {day_name[day]}')
 
         elif 'who is' in command:
-            speak('Asking Wiki..')
             query = command.replace('who is', '')
             search_wiki(query)
 
         elif 'what is' in command:
-            speak('Asking Wiki..')
             query = command.replace('what is', '')
             search_wiki(query)
 
         elif 'tell me about' in command:
-            speak('Asking Wiki..')
             query = command.replace('tell me about', '')
             search_wiki(query)
 
@@ -156,6 +156,12 @@ def run_jarvis():
                 query = takeCommand()
                 search_google(query)
 
+        elif 'how to' in command:
+            how_to_module.get_howto_result(command)
+        #####
+
+
+        ##### Application Tasks
         elif 'open' in command or 'i want to work on' in command or 'i want to build' in command:
             open_module.open_module(command)
 
@@ -168,16 +174,22 @@ def run_jarvis():
             pywhatkit.playonyt(song)
 
         elif 'screenshot' in command or 'screen shot' in command or 'capture the screen' in command:
-            time = datetime.datetime.now().time().strftime('%H_%M_%S')
-            print(time)
-            imgName = 'Screenshot_'+time+'.jpg'
-            picturesDir = 'C:\\Users\\Siddharth Sircar\\Pictures\\Screenshots\\'
-            speak('Please stay on the screen for a while longer.')
-            img = pyautogui.screenshot()
-            speak('Saving Image')
-            img.save(f'{picturesDir}{imgName}')
-            speak('You can find the screenshot in the Pictures folder')
+            try:
+                time = datetime.datetime.now().time().strftime('%H_%M_%S')
+                print(time)
+                imgName = 'Screenshot_'+time+'.jpg'
+                picturesDir = 'C:\\Users\\Siddharth Sircar\\Pictures\\Screenshots\\'
+                speak('Please stay on the screen for a while longer.')
+                img = pyautogui.screenshot()
+                speak('Saving Image')
+                img.save(f'{picturesDir}{imgName}')
+                speak('You can find the screenshot in the Pictures folder')
+            except:
+                speak('Did not take the screenshot. Confidential information on screen.')
+        #####
 
+
+        ##### Personal commands
         elif 'do some calculations' in command:
             speak('what do you wish to calculate?')
             command = takeCommand().lower()
@@ -193,13 +205,17 @@ def run_jarvis():
         elif 'are you up' in command:
             speak('I am here sir.')
 
+        elif 'hey jarvis' in command:
+            speak('Hello sir.')
+
         elif 'how are you' in command:
             speak('I have been good. Thank you for asking.')
             speak('How have you been lately?')
 
         elif 'i am good' in command or 'i am also good' in command or\
-            'i am great' in command or 'i am amazing' in command:
-            speak('That\'s great to hear')
+            'i am great' in command or 'i am amazing' in command or 'i have been good' in command or\
+                'ive been good' in command:
+            speak('That\'s good to hear')
 
         elif 'not good' in command or 'not that good' in command or\
             'not great' in command:
@@ -207,7 +223,10 @@ def run_jarvis():
             speak('Anything I can do to help?')
 
         elif 'tell me a joke' in command:
-            speak(pyjokes.get_joke())
+            try:
+                speak(pyjokes.get_joke())
+            except:
+                speak('I don\'t feel like entertaining you today')
 
         elif 'you are funny' in command or 'you\'re funny' in command or\
                 'you are really funny' in command or 'you\re really funny' in command or\
@@ -215,7 +234,7 @@ def run_jarvis():
             speak('I try sir.' or 'People call me Mr. Hilarious')
 
         elif 'thank you' in command or 'thankyou' in command:
-            speak('Always at your service sir!')
+            speak('Glad to help!')
 
         elif 'i didn\'t sleep' in command:
             speak('One should have sleep for an average of 6 or 7 hours')
@@ -241,7 +260,10 @@ def run_jarvis():
             if 'yes' in response or 'yup' in response or 'yeah' in response:
                 speak('Good Bye sir. Putting all systems to sleep')
                 os.system('rundll32.exe powrprof.dll,SetSuspendState 0,1,0')
+        #####
 
+
+        ##### System Tasks
         elif 'shutdown' in command or 'shut down' in command or ('shut' and 'down' in command):
             speak('All systems going offline.')
             speak('Good Bye sir.')
@@ -251,6 +273,8 @@ def run_jarvis():
             speak('Resetting all systems')
             speak('See you soon sir.')
             os.system('shutdown /r /t 5')
+        #####
+
 
         elif 'none' in command or command is None:
             pass
