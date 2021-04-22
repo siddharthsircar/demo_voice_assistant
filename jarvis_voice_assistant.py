@@ -12,6 +12,7 @@ import wikipedia
 
 import close_module
 import gratitude_module
+import location_module
 import news_module
 import open_module
 
@@ -93,6 +94,10 @@ def run_jarvis():
     elif 'date' in command:
         today = datetime.date.today()
         speak(f'It\'s {today}')
+
+    elif 'current location' in command or 'where are we' in command or 'where am i' in command \
+            or 'location' in command or 'locate us' in command:
+        location_module.get_current_location()
 
     elif 'news' in command or 'headlines' in command:
         speak('Fetching the latest news')
