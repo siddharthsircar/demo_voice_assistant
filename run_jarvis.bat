@@ -1,1 +1,0 @@
-pythonw run_jarvis.py

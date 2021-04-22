@@ -1,5 +1,5 @@
 import requests
-import jarvis_voice_assistant as jarvis
+import voice_assistant as assistant
 
 from bs4 import BeautifulSoup
 
@@ -10,6 +10,6 @@ def get_weather():
         req = requests.get(url)
         data = BeautifulSoup(req.text, 'html.parser')
         temp = data.find('div', class_='BNeawe').text
-        jarvis.speak(f'Current {search} is {temp}')
+        assistant.speak(f'Current {search} is {temp}')
     except:
-        jarvis.speak('Unable to connect to satellite')
+        assistant.speak('Unable to connect to satellite')

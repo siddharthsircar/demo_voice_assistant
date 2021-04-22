@@ -20,6 +20,12 @@ engine = pyttsx3.init('sapi5')
 rate = engine.getProperty('rate')
 engine.setProperty('rate', rate-20)
 
+# def hear_all_voices():
+#     voices = engine.getProperty('voices')
+#     for voice in voices:
+#         engine.setProperty('voice', voice.id)
+#         engine.say('Hi. I am you personal voice assistant')
+#         engine.runAndWait()
 
 def speak(audio):
     engine.say(audio)
@@ -71,6 +77,16 @@ def takeCommand():
         return command
 
 def run_jarvis(counter):
+    voices = engine.getProperty('voices')
+    engine.setProperty('voice', voices[0].id)
+    assistant(counter)
+
+def run_friday(counter):
+    voices = engine.getProperty('voices')
+    engine.setProperty('voice', voices[4].id)
+    assistant(counter)
+
+def assistant(counter):
     greetMe(counter)
     sleepTimer = 0
     while True:
@@ -89,82 +105,9 @@ def run_jarvis(counter):
 
         # Logic for executing tasks based on commands
 
-        ##### Information Tasks
-        if 'time' in command:
-            time = datetime.datetime.now().strftime('%I:%M %p')
-            speak(f'It\'s {time}')
-            hour = int(datetime.datetime.now().hour)
-            if hour >= 0 and hour < 4:
-                speak('you should go to sleep now sir. It\'s pretty late')
-
-        elif 'date' in command:
-            today = datetime.date.today()
-            speak(f'It\'s {today}')
-
-        elif 'current location' in command or 'where are we' in command or 'where am i' in command \
-                or 'location' in command or 'locate us' in command:
-            location_module.get_current_location()
-
-        elif 'temperature' in command or 'weather' in command:
-            weather_module.get_weather()
-
-        elif 'news' in command or 'headlines' in command:
-            speak('Fetching the latest news')
-            try:
-                if 'headlines' in command:
-                    news_module.get_news()
-                else:
-                    news_module.get_news()
-                    speak('Do you wish to know more about a certain headline?')
-                    response = takeCommand().lower()
-                    if 'yes' in response or 'yup' in response or 'yeah' in response:
-                        speak('Which one?')
-                        response = takeCommand().lower()
-                        news_module.get_specific_news(response)
-                    elif 'no' in command or 'nope' in command or 'nah' in command:
-                        speak('Ok sir.')
-            except:
-                speak('Sorry sir, could not find latest news.')
-
-        elif 'day' in command:
-            day_name = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-            day = datetime.datetime.today(). weekday()
-            speak(f'It\'s {day_name[day]}')
-
-        elif 'who is' in command:
-            query = command.replace('who is', '')
-            search_wiki(query)
-
-        elif 'tell me about' in command:
-            query = command.replace('tell me about', '')
-            search_wiki(query)
-
-        elif 'search google' in command:
-            try:
-                speak('What should I search for?')
-                query = takeCommand()
-                search_google(query)
-            except:
-                speak('Could you please repeat')
-                query = takeCommand()
-                search_google(query)
-
-        elif 'run a search on' in command:
-            try:
-                query = command.replace('run a search on', '')
-                search_google(query)
-            except:
-                speak('What should I search for?')
-                query = takeCommand()
-                search_google(query)
-
-        elif 'how to' in command:
-            how_to_module.get_howto_result(command)
-        #####
-
 
         ##### Application Tasks
-        elif 'open' in command or 'i want to work on' in command or 'i want to build' in command:
+        if 'open' in command or 'i want to work on' in command or 'i want to build' in command:
             open_module.open_module(command)
 
         elif 'close' in command or 'i am done with' in command:
@@ -254,6 +197,79 @@ def run_jarvis(counter):
                 break
             else:
                 pass
+        #####
+
+        ##### Information Tasks
+        elif 'time' in command:
+            time = datetime.datetime.now().strftime('%I:%M %p')
+            speak(f'It\'s {time}')
+            hour = int(datetime.datetime.now().hour)
+            if hour >= 0 and hour < 4:
+                speak('you should go to sleep now sir. It\'s pretty late')
+
+        elif 'date' in command:
+            today = datetime.date.today()
+            speak(f'It\'s {today}')
+
+        elif 'current location' in command or 'where are we' in command or 'where am i' in command \
+                or 'location' in command or 'locate us' in command:
+            location_module.get_current_location()
+
+        elif 'temperature' in command or 'weather' in command:
+            weather_module.get_weather()
+
+        elif 'news' in command or 'headlines' in command:
+            speak('Fetching the latest news')
+            try:
+                if 'headlines' in command:
+                    news_module.get_news()
+                else:
+                    news_module.get_news()
+                    speak('Do you wish to know more about a certain headline?')
+                    response = takeCommand().lower()
+                    if 'yes' in response or 'yup' in response or 'yeah' in response:
+                        speak('Which one?')
+                        response = takeCommand().lower()
+                        news_module.get_specific_news(response)
+                    elif 'no' in command or 'nope' in command or 'nah' in command:
+                        speak('Ok sir.')
+            except:
+                speak('Sorry sir, could not find latest news.')
+
+        elif 'day' in command:
+            day_name = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+            day = datetime.datetime.today().weekday()
+            speak(f'It\'s {day_name[day]}')
+
+        elif 'who is' in command:
+            query = command.replace('who is', '')
+            search_wiki(query)
+
+        elif 'tell me about' in command:
+            query = command.replace('tell me about', '')
+            search_wiki(query)
+
+        elif 'search google' in command:
+            try:
+                speak('What should I search for?')
+                query = takeCommand()
+                search_google(query)
+            except:
+                speak('Could you please repeat')
+                query = takeCommand()
+                search_google(query)
+
+        elif 'run a search on' in command:
+            try:
+                query = command.replace('run a search on', '')
+                search_google(query)
+            except:
+                speak('What should I search for?')
+                query = takeCommand()
+                search_google(query)
+
+        elif 'how to' in command:
+            how_to_module.get_howto_result(command)
         #####
 
 

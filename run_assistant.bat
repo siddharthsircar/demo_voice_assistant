@@ -1,0 +1,2 @@
+pythonw run_assistant.py
+exit

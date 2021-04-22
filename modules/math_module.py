@@ -1,14 +1,14 @@
 import operator
 
-import jarvis_voice_assistant as jarvis
+import voice_assistant as assistant
 
 
 def perform_calculations(command):
-    jarvis.speak(f'Calculating {command}')
+    assistant.speak(f'Calculating {command}')
     try:
-        jarvis.speak(f'Your result is: {eval_binary_expr(*(command.split()))}')
+        assistant.speak(f'Your result is: {eval_binary_expr(*(command.split()))}')
     except:
-        jarvis.speak('I am unable to calculate. I guess I am not smarter than a 12 year old')
+        assistant.speak('I am unable to calculate. I guess I am not smarter than a 12 year old')
         pass
 
 def get_operator(op):

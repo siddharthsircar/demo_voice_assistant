@@ -1,6 +1,6 @@
 import os
 import webbrowser
-import jarvis_voice_assistant as jarvis
+import voice_assistant as assistant
 
 def close_module(command):
     # if 'close youtube' in command:
@@ -44,37 +44,37 @@ def close_module(command):
     #     webbrowser.open('www.netflix.com')
 
     if 'explorer' in command:
-        jarvis.speak('Closing file explorer')
+        assistant.speak('Closing file explorer')
         os.system('taskkill /f /im explorer')
 
     elif 'close vs code' in command or 'flutter' in command:
         try:
             vsCodePath = 'S:\\Development\\Tools\\Microsoft VS Code\\Code.exe'
-            jarvis.speak('Closing VS Code')
+            assistant.speak('Closing VS Code')
             os.system(f'taskkill /f /im {vsCodePath}')
         except:
-            jarvis.speak('VS Code is not open')
+            assistant.speak('VS Code is not open')
 
     elif 'close android studio' in command or 'android' in command:
         try:
             studioPath = 'S:\\Development\\Tools\\Android Studio\\bin\\studio64.exe'
-            jarvis.speak('Closing Android Studio')
+            assistant.speak('Closing Android Studio')
             os.system(f'taskkill /f /im {studioPath}')
         except:
-            jarvis.speak('Android studio is not open')
+            assistant.speak('Android studio is not open')
 
     elif 'close sublime' in command or 'close note pad' in command or 'close notepad' in command:
         try:
             sublimePath = 'C:\\Program Files\\Sublime Text 3\\sublime_text.exe'
-            jarvis.speak('Opening Sublime Text editor')
+            assistant.speak('Opening Sublime Text editor')
             os.system(f'taskkill /f /im {sublimePath}')
         except:
-            jarvis.speak('Sublime text is not open')
+            assistant.speak('Sublime text is not open')
 
     elif 'close python ide' in command or 'python' in command:
         try:
             pycharmPath = 'S:\\Development\\Tools\\PyCharm Community Edition 2021.1\\bin\\pycharm64.exe'
-            jarvis.speak('Closing PyCharm')
+            assistant.speak('Closing PyCharm')
             os.system(f'taskkill /f /im {pycharmPath}')
         except:
-            jarvis.speak('PyCharm is not open')
+            assistant.speak('PyCharm is not open')

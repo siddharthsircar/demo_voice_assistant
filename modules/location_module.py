@@ -1,10 +1,10 @@
 import requests
 
-import jarvis_voice_assistant as jarvis
+import voice_assistant as assistant
 
 
 def get_current_location():
-    jarvis.speak('checking sir')
+    assistant.speak('checking sir')
     try:
         ipAdd = requests.get('https://api.ipify.org').text
         print(ipAdd)
@@ -17,9 +17,9 @@ def get_current_location():
         region = geo_data['region']
         latitude = geo_data['latitude']
         longitude = geo_data['longitude']
-        jarvis.speak(f'I believe we are in a city named {city} in {country}')
-        jarvis.speak(f'It is the {region}. Longitude: {longitude}, Latitude: {latitude}')
+        assistant.speak(f'I believe we are in a city named {city} in {country}')
+        assistant.speak(f'It is the {region}. Longitude: {longitude}, Latitude: {latitude}')
     except Exception as e:
-        jarvis.Speak('Sorry, due to network issues could not find current location.')
+        assistant.Speak('Sorry, due to network issues could not find current location.')
         pass
 

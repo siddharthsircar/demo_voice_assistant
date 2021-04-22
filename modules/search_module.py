@@ -1,33 +1,33 @@
 import pywhatkit
 import wikipedia
 
-import jarvis_voice_assistant as jarvis
+import voice_assistant as assistant
 
 
 def search_google(query):
-    jarvis.speak(f'Searching for {query}')
+    assistant.speak(f'Searching for {query}')
     try:
         pywhatkit.search(query)
     except:
-        jarvis.speak(f'Could not find information on {query}')
+        assistant.speak(f'Could not find information on {query}')
 
 def search_wiki(query):
-    jarvis.speak(f'Asking Wiki about {query}')
+    assistant.speak(f'Asking Wiki about {query}')
     try:
         result = wikipedia.summary(query, sentences=1)
-        jarvis.speak(result)
-        jarvis.speak('Anything else sir?')
-        command = jarvis.takeCommand()
+        assistant.speak(result)
+        assistant.speak('Anything else sir?')
+        command = assistant.takeCommand()
 
         if 'no' in command:
-            jarvis.speak('Okay.')
+            assistant.speak('Okay.')
 
         elif 'repeat' in command:
-            jarvis.speak(result)
+            assistant.speak(result)
 
         elif 'yes' in command:
-            jarvis.speak('What do you want to know about?')
-            command = jarvis.takeCommand()
+            assistant.speak('What do you want to know about?')
+            command = assistant.takeCommand()
             if 'who is' in command:
                 query = command.replace('who is', '')
                 search_wiki(query)
@@ -40,15 +40,15 @@ def search_wiki(query):
             else:
                 search_wiki(command)
     except:
-        jarvis.speak(f'Wiki has no information on {query}')
-        jarvis.speak('Anything else sir?')
-        command = jarvis.takeCommand()
+        assistant.speak(f'Wiki has no information on {query}')
+        assistant.speak('Anything else sir?')
+        command = assistant.takeCommand()
         if 'no' in command:
-            jarvis.speak('Okay.')
+            assistant.speak('Okay.')
 
         elif 'yes' in command:
-            jarvis.speak('What do you want to know about?')
-            command = jarvis.takeCommand()
+            assistant.speak('What do you want to know about?')
+            command = assistant.takeCommand()
             if 'who is' in command:
                 query = command.replace('who is', '')
                 search_wiki(query)
@@ -61,4 +61,4 @@ def search_wiki(query):
             elif 'none' in command or command is None:
                 pass
             else:
-                jarvis.speak('I did not quite get you.')
+                assistant.speak('I did not quite get you.')
