@@ -25,10 +25,11 @@ if __name__ == "__main__":
 
                 elif 'no' in response or 'wake up' in response or 'wakeup' in response:
                     jarvis.speak('Okay. I\'ll be up in a few seconds')
+                    time.sleep(10)
                     counter += 1
                     jarvis.run_jarvis(counter)
 
-        elif 'jarvis' in permission:
+        elif 'jarvis' in permission or 'are you up' in permission:
             counter += 1
             jarvis.run_jarvis(counter)
 

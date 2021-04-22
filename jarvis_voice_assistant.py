@@ -1,7 +1,8 @@
 import os
-import sys
 import time
 
+import humanreadable as hr
+import psutil
 import pyautogui
 import pyjokes
 import pyttsx3
@@ -9,10 +10,10 @@ import datetime
 
 import pywhatkit
 import speech_recognition as sr
-import wikipedia
+import speedtest
 
 from modules import news_module, open_module, math_module, close_module, location_module, \
-    weather_module, how_to_module
+    weather_module, how_to_module, gratitude_module
 from modules.search_module import search_google, search_wiki
 
 engine = pyttsx3.init('sapi5')
@@ -71,6 +72,7 @@ def takeCommand():
 
 def run_jarvis(counter):
     greetMe(counter)
+    sleepTimer = 0
     while True:
         command = takeCommand().lower()
         if 'hey' in command:
@@ -80,6 +82,10 @@ def run_jarvis(counter):
         if 'jarvis' in command:
             command = command.replace('jarvis', '')
         print(f'User: {command}')
+        if command == 'none':
+            sleepTimer += 1
+        else:
+            sleepTimer = 0
 
         # Logic for executing tasks based on commands
 
@@ -127,10 +133,6 @@ def run_jarvis(counter):
 
         elif 'who is' in command:
             query = command.replace('who is', '')
-            search_wiki(query)
-
-        elif 'what is' in command:
-            query = command.replace('what is', '')
             search_wiki(query)
 
         elif 'tell me about' in command:
@@ -233,9 +235,6 @@ def run_jarvis(counter):
             'you really funny' in command:
             speak('I try sir.' or 'People call me Mr. Hilarious')
 
-        elif 'thank you' in command or 'thankyou' in command:
-            speak('Glad to help!')
-
         elif 'i didn\'t sleep' in command:
             speak('One should have sleep for an average of 6 or 7 hours')
             speak('you should take care of your health sir!')
@@ -250,9 +249,15 @@ def run_jarvis(counter):
 
         elif 'goodnight' in command or 'good night' in command or 'good bye' in command or \
                 'goodbye' in command or 'bye' in command or 'thank you' in command or 'thankyou' in command:
-            speak('Bye sir, let me know when you need me.')
-            break
+            com = gratitude_module.gratitude_module(command)
+            if 'sleep' in com:
+                break
+            else:
+                pass
+        #####
 
+
+        ##### System Tasks
         elif 'i\'m going out' in command or 'i am going out' in command or 'see you' in command or \
                 ('sleep' in command and 'system' in command):
             speak('Sir, are you leaving?')
@@ -260,10 +265,7 @@ def run_jarvis(counter):
             if 'yes' in response or 'yup' in response or 'yeah' in response:
                 speak('Good Bye sir. Putting all systems to sleep')
                 os.system('rundll32.exe powrprof.dll,SetSuspendState 0,1,0')
-        #####
 
-
-        ##### System Tasks
         elif 'shutdown' in command or 'shut down' in command or ('shut' and 'down' in command):
             speak('All systems going offline.')
             speak('Good Bye sir.')
@@ -273,11 +275,52 @@ def run_jarvis(counter):
             speak('Resetting all systems')
             speak('See you soon sir.')
             os.system('shutdown /r /t 5')
+
+        elif 'power level' in command or 'battery' in command or\
+                'how much power left' in command or 'how much power is left' in command:
+            battery = psutil.sensors_battery()
+            percentage = battery.percent
+            seconds = battery.secsleft
+            seconds = seconds % (24 * 3600)
+            hour = seconds // 3600
+            seconds %= 3600
+            minutes = seconds // 60
+            seconds %= 60
+
+            speak(f'System at {percentage} percent')
+            if percentage==100 and battery.power_plugged:
+                speak('We are running at full power, you can disconnect the power source')
+            elif (percentage>=95 and percentage<100) and battery.power_plugged:
+                speak('We have enough power, you can disconnect the power source')
+            if (percentage >=40 and percentage <70) and battery.power_plugged is False:
+                speak('We should connect to a power source')
+                speak(f'We can remain operational for {hour} hours and {minutes} minutes')
+            elif (percentage >=20 and percentage <40) and battery.power_plugged is False:
+                speak('Power levels low. Please connect to a power source')
+                speak(f'We can remain operational for {hour} hours and {minutes} minutes')
+            elif percentage <20 and battery.power_plugged is False:
+                speak('Power levels critical. Connect to a power source asap')
+                speak(f'We can remain operational for {hour} hours and {minutes} minutes')
+
+        elif 'internet speed' in command:
+            speak('Calculating internet speed.')
+            try:
+                st = speedtest.Speedtest()
+                down = st.download()
+                print("'{}' to Mbps -> {}".format(down, hr.BitPerSecond(down).mega_bps))
+                up = st.upload()
+
+                speak(f'Sir, we are getting {down} bit per second download speed and {up} bit per second upload speed')
+            except:
+                speak('You are not connected to the internet')
         #####
 
-
         elif 'none' in command or command is None:
-            pass
+            if sleepTimer>30:
+                print('Putting jarvis to sleep')
+                break
+            else:
+                pass
 
         else:
             speak('I did not quite get you.')
