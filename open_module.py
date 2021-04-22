@@ -47,18 +47,6 @@ def open_module(command):
         jarvis.speak('Opening file explorer')
         os.system('explorer')
 
-    # elif 'camera' in command:
-    #     try:
-    #         cap = cv2.VideoCapture(0)
-    #         while True:
-    #             ret, img = cap.read()
-    #             cv2.imshow('webcam', img)
-    #             k = cv2.waitKey(50)
-    #             if k==27:
-    #                 break;
-    #         cap.release()
-    #         cv2.destroyAllWindows()
-
     elif 'open vs code' in command or 'i want to work on flutter' in command:
         try:
             vsCodePath = 'S:\\Development\\Tools\\Microsoft VS Code\\Code.exe'
