@@ -277,7 +277,8 @@ def run_jarvis(counter):
             os.system('shutdown /r /t 5')
 
         elif 'power level' in command or 'battery' in command or\
-                'how much power left' in command or 'how much power is left' in command:
+                'how much power left' in command or 'how much power is left' in command or\
+                'do we need to connect to a power source' in command or 'power source' in command:
             battery = psutil.sensors_battery()
             percentage = battery.percent
             seconds = battery.secsleft
