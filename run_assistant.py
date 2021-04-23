@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
                 elif 'no' in response or 'wake up' in response or 'wakeup' in response:
                     assistant.speak('Okay. I\'ll be up in a few seconds')
-                    time.sleep(10)
+                    time.sleep(5)
                     counter += 1
                     assistant.run_jarvis(counter)
 

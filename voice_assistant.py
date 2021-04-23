@@ -1,5 +1,6 @@
 import os
 import time
+import webbrowser
 
 import humanreadable as hr
 import psutil
@@ -13,7 +14,7 @@ import speech_recognition as sr
 import speedtest
 
 from modules import news_module, open_module, math_module, close_module, location_module, \
-    weather_module, how_to_module, gratitude_module, movies_module
+    weather_module, how_to_module, gratitude_module, movies_module, smartphone_module
 from modules.search_module import search_google, search_wiki
 
 engine = pyttsx3.init('sapi5')
@@ -63,7 +64,7 @@ def greetMe(counter):
         seconds %= 3600
         minutes = seconds // 60
         seconds %= 60
-        if (percentage >= 20 and percentage < 40) and battery.power_plugged is False:
+        if (percentage >= 20 and percentage < 50) and battery.power_plugged is False:
             speak(f'Power levels low. Systems at {percentage} percent. Please connect to a power source')
             speak(f'We can remain operational for {hour} hours and {minutes} minutes')
         elif percentage < 20 and battery.power_plugged is False:
@@ -80,13 +81,14 @@ def takeCommand():
     listener = sr.Recognizer()
     with sr.Microphone() as source:
         print("Listening...")
-        listener.adjust_for_ambient_noise(source)
-        listener.pause_threshold = 1
+        # listener.adjust_for_ambient_noise(source)
+        # listener.pause_threshold = 1
+        # audio = listener.listen(source, timeout=4, phrase_time_limit=7)
+        audio = listener.record(source, duration=5)
         try:
-            audio = listener.listen(source, timeout=4, phrase_time_limit=7)
             print('Recognizing...')
-            command = listener.recognize_google(audio) # , language='en-in'
-        except Exception as e:
+            command = listener.recognize_google(audio, language='en-in')
+        except:
             return 'none'
         command = command.lower()
         return command
@@ -105,13 +107,14 @@ def assistant(counter):
     greetMe(counter)
     sleepTimer = 0
     while True:
-        command = takeCommand().lower()
+        command = takeCommand()
         if 'hey' in command:
             command = command.replace('hey', '')
         if 'hi' in command:
             command = command.replace('hi', '')
         if 'jarvis' in command:
             command = command.replace('jarvis', '')
+
         if command == 'none':
             sleepTimer += 1
         else:
@@ -119,10 +122,6 @@ def assistant(counter):
             print(f'User: {command}')
 
         # Logic for executing tasks based on commands
-
-        if command == 'hey jarvis' or command == 'hey friday':
-            speak('Hello sir.')
-
         ##### Application Tasks
         if 'open' in command or 'i want to work on' in command or 'i want to build' in command:
             open_module.open_module(command)
@@ -199,8 +198,8 @@ def assistant(counter):
                 speak('I don\'t feel like entertaining you today')
 
         elif 'you are funny' in command or 'you\'re funny' in command or\
-                'you are really funny' in command or 'you\re really funny' in command or\
-            'you really funny' in command:
+                'you are really funny' in command or 'you\'re really funny' in command or\
+            'you really funny' in command or 'very funny' in command:
             speak('I try sir.' or 'People call me Mr. Hilarious')
 
         elif 'i didn\'t sleep' in command:
@@ -284,7 +283,7 @@ def assistant(counter):
                 query = takeCommand()
                 search_google(query)
 
-        elif 'run a search on' in command:
+        elif 'run a search on' in command or 'run search on' in command or 'search on' in command:
             try:
                 query = command.replace('run a search on', '')
                 search_google(query)
@@ -293,12 +292,81 @@ def assistant(counter):
                 query = takeCommand()
                 search_google(query)
 
+        elif 'i want to learn' in command or 'learn' in command or 'study' in command or\
+            'find courses on' in command:
+            query=''
+            if 'i want to' in command:
+                query = command.replace('i want to','')
+            if 'learn' in command:
+                query = command.replace('learn', '')
+            if 'study' in command:
+                query = command.replace('study', '')
+            if 'find courses on' in command:
+                query = command.replace('find courses on', '')
+            search_google(f'courses on {query}')
+            webbrowser.open(f'https://www.youtube.com/results?search_query={query}')
+
         elif 'how to' in command:
             how_to_module.get_howto_result(command)
         #####
 
+        ##### Smartphone Commands
+        elif 'receive the call' in command or 'pick up the call' in command or 'pic up the call' in command or \
+                'pickup the call' in command or 'pickup' in command:
+            smartphone_module.receive_call()
+
+        elif 'cut the call' in command or 'hang up the call' in command or 'hangup the call' in command or\
+                'disconnect' in command or 'hangup' in command or 'hang up' in command or 'cut' in command:
+            smartphone_module.disconnect_call()
+
+        elif 'make a call' in command:
+            status, _ = smartphone_module.check_device_connected()
+            if status:
+                speak('Who should I call?')
+                person = takeCommand().strip()
+                smartphone_module.make_a_call(person)
+            else:
+                speak('I am unable to access your phone.')
+
+        elif 'call' in command:
+            status, _ = smartphone_module.check_device_connected()
+            if status:
+                person = command.replace('call','').strip()
+                smartphone_module.make_a_call(person)
+            else:
+                speak('I am unable to access your phone.')
+        #####
+
 
         ##### System Tasks
+        elif 'speak up' in command or 'increase the volume' in command or 'volumeup' in command or\
+                'volume up' in command:
+            satisfied = False
+            while satisfied is False:
+                pyautogui.press('volumeup')
+                speak('Is that okay sir?')
+                command = takeCommand()
+                if 'yes' in command:
+                    satisfied = True
+                    speak('ok sir')
+                elif 'no' in command or 'more' in command:
+                    satisfied = False
+
+        elif 'decrease the volume' in command or 'volumedown' in command or 'volume down' in command:
+            satisfied = False
+            while satisfied is False:
+                pyautogui.press('volumedown')
+                speak('Is that okay sir?')
+                command = takeCommand()
+                if 'yes' in command:
+                    satisfied = True
+                    speak('ok sir')
+                elif 'no' in command or 'more' in command:
+                    satisfied = False
+
+        elif 'mute' in command or 'quiet' in command:
+            pyautogui.press('mute')
+
         elif 'i\'m going out' in command or 'i am going out' in command or 'see you' in command or \
                 ('sleep' in command and 'system' in command):
             speak('Sir, are you leaving?')
@@ -308,9 +376,15 @@ def assistant(counter):
                 os.system('rundll32.exe powrprof.dll,SetSuspendState 0,1,0')
 
         elif 'shutdown' in command or 'shut down' in command or ('shut' and 'down' in command):
-            speak('All systems going offline.')
-            speak('Good Bye sir.')
-            os.system('shutdown /s /t 5')
+            speak('Are you sure?')
+            command = takeCommand()
+            if 'yes' in command:
+                speak('All systems going offline.')
+                speak('Good Bye sir.')
+                os.system('shutdown /s /t 5')
+            else:
+                speak('Canceling shut down procedure')
+                pass
 
         elif 'restart' in command or 'reboot' in command:
             speak('Resetting all systems')
@@ -359,7 +433,7 @@ def assistant(counter):
 
         elif 'none' in command or command is None:
             if sleepTimer>30:
-                print('Putting jarvis to sleep')
+                speak('I am going to lie down a bit.')
                 break
             else:
                 pass
