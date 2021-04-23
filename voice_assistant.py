@@ -13,7 +13,7 @@ import speech_recognition as sr
 import speedtest
 
 from modules import news_module, open_module, math_module, close_module, location_module, \
-    weather_module, how_to_module, gratitude_module
+    weather_module, how_to_module, gratitude_module, movies_module
 from modules.search_module import search_google, search_wiki
 
 engine = pyttsx3.init('sapi5')
@@ -54,8 +54,23 @@ def greetMe(counter):
 
         if (hour >= 5 and hour < 23):
             speak('All systems online')
+
+        battery = psutil.sensors_battery()
+        percentage = battery.percent
+        seconds = battery.secsleft
+        seconds = seconds % (24 * 3600)
+        hour = seconds // 3600
+        seconds %= 3600
+        minutes = seconds // 60
+        seconds %= 60
+        if (percentage >= 20 and percentage < 40) and battery.power_plugged is False:
+            speak(f'Power levels low. Systems at {percentage} percent. Please connect to a power source')
+            speak(f'We can remain operational for {hour} hours and {minutes} minutes')
+        elif percentage < 20 and battery.power_plugged is False:
+            speak(f'Power levels critical. Systems at {percentage} percent. Connect to a power source asap')
+            speak(f'We can remain operational for {hour} hours and {minutes} minutes')
     else:
-        speak('I am up.')
+        speak('Hi sir. I am up.')
 
 def takeCommand():
     '''
@@ -97,14 +112,16 @@ def assistant(counter):
             command = command.replace('hi', '')
         if 'jarvis' in command:
             command = command.replace('jarvis', '')
-        print(f'User: {command}')
         if command == 'none':
             sleepTimer += 1
         else:
             sleepTimer = 0
+            print(f'User: {command}')
 
         # Logic for executing tasks based on commands
 
+        if command == 'hey jarvis' or command == 'hey friday':
+            speak('Hello sir.')
 
         ##### Application Tasks
         if 'open' in command or 'i want to work on' in command or 'i want to build' in command:
@@ -112,6 +129,12 @@ def assistant(counter):
 
         elif 'close' in command or 'i am done with' in command:
             close_module.close_module(command)
+
+        elif 'play a movie' in command or 'play movie' in command or 'i want to watch a movie' in command or\
+                'watch a movie' in command or 'watch movie' in command or 'movie' in command:
+            speak('Which movie do you wish to watch?')
+            command = takeCommand()
+            movies_module.run_movie(command)
 
         elif 'play' in command:
             song = command.replace('play', '')
@@ -150,8 +173,10 @@ def assistant(counter):
         elif 'are you up' in command:
             speak('I am here sir.')
 
-        elif 'hey jarvis' in command:
-            speak('Hello sir.')
+        elif 'we need to add more tasks for you' in command or 'you can handle more tasks' in command or\
+            'you should handle more work' in command or 'you can handle more work' in command or \
+                'you need to handle more work' in command:
+            speak('I am ready for more work')
 
         elif 'how are you' in command:
             speak('I have been good. Thank you for asking.')
@@ -187,7 +212,7 @@ def assistant(counter):
             break
 
         elif 'you can go' in command:
-            speak('Good bye sir')
+            speak('Good bye sir. Let me know when you need me.')
             break
 
         elif 'goodnight' in command or 'good night' in command or 'good bye' in command or \
@@ -236,7 +261,7 @@ def assistant(counter):
             except:
                 speak('Sorry sir, could not find latest news.')
 
-        elif 'day' in command:
+        elif ('friday' not in command and 'day' in command):
             day_name = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
             day = datetime.datetime.today().weekday()
             speak(f'It\'s {day_name[day]}')
@@ -292,7 +317,7 @@ def assistant(counter):
             speak('See you soon sir.')
             os.system('shutdown /r /t 5')
 
-        elif 'power level' in command or 'battery' in command or\
+        elif 'power' in command or 'power level' in command or 'battery' in command or\
                 'how much power left' in command or 'how much power is left' in command or\
                 'do we need to connect to a power source' in command or 'power source' in command:
             battery = psutil.sensors_battery()

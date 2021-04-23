@@ -9,7 +9,10 @@ if __name__ == "__main__":
     while True:
         permission = assistant.takeCommand()
 
-        if 'friday' in permission:
+        if 'terminate' in permission or 'i don\'t need you' in permission or 'i do not need you' in permission:
+            sys.exit()
+
+        elif 'friday' in permission:
             counter += 1
             assistant.run_friday(counter)
 
@@ -36,6 +39,3 @@ if __name__ == "__main__":
         elif 'jarvis' in permission or 'are you up' in permission:
             counter += 1
             assistant.run_jarvis(counter)
-
-        elif 'terminate' in permission:
-            sys.exit()
