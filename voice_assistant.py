@@ -71,7 +71,11 @@ def greetMe(counter):
             speak(f'Power levels critical. Systems at {percentage} percent. Connect to a power source asap')
             speak(f'We can remain operational for {hour} hours and {minutes} minutes')
     else:
-        speak('Hi sir. I am up.')
+        speak('Hi sir. I\'m up.')
+
+    speak('Connecting mobile to the home network.')
+    smartphone_module.connect_device()
+
 
 def takeCommand():
     '''
@@ -320,21 +324,39 @@ def assistant(counter):
             smartphone_module.disconnect_call()
 
         elif 'make a call' in command:
-            status, _ = smartphone_module.check_device_connected()
-            if status:
-                speak('Who should I call?')
-                person = takeCommand().strip()
-                smartphone_module.make_a_call(person)
-            else:
-                speak('I am unable to access your phone.')
+            try:
+                status, _ = smartphone_module.check_device_connected()
+                if status:
+                    speak('Who should I call?')
+                    person = takeCommand().strip()
+                    smartphone_module.make_a_call(person)
+                else:
+                    speak('I am unable to access your phone.')
+            except:
+                speak('Mobile not connected')
+                speak('Should I try to connect?')
+                command = takeCommand()
+                if 'yes' in command:
+                    smartphone_module.connect_device()
+                else:
+                    pass
 
         elif 'call' in command:
-            status, _ = smartphone_module.check_device_connected()
-            if status:
-                person = command.replace('call','').strip()
-                smartphone_module.make_a_call(person)
-            else:
-                speak('I am unable to access your phone.')
+            try:
+                status, _ = smartphone_module.check_device_connected()
+                if status:
+                    person = command.replace('call','').strip()
+                    smartphone_module.make_a_call(person)
+                else:
+                    speak('I am unable to access your phone.')
+            except:
+                speak('Mobile not connected')
+                speak('Should I try to connect?')
+                command = takeCommand()
+                if 'yes' in command:
+                    smartphone_module.connect_device()
+                else:
+                    pass
         #####
 
 
@@ -364,7 +386,7 @@ def assistant(counter):
                 elif 'no' in command or 'more' in command:
                     satisfied = False
 
-        elif 'mute' in command or 'quiet' in command:
+        elif 'mute' in command or 'quiet' in command or 'silent' in command:
             pyautogui.press('mute')
 
         elif 'i\'m going out' in command or 'i am going out' in command or 'see you' in command or \
@@ -428,7 +450,7 @@ def assistant(counter):
 
                 speak(f'Sir, we are getting {down} bit per second download speed and {up} bit per second upload speed')
             except:
-                speak('You are not connected to the internet')
+                speak('Unable to calculate internet speed')
         #####
 
         elif 'none' in command or command is None:

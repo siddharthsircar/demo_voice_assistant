@@ -1,16 +1,58 @@
 from ppadb.client import Client
-
 import voice_assistant as assistant
+import cmd_module as cmd
 
 adb = Client(host='127.0.0.1', port=5037)
+mobile_ip = '192.168.29.187'
+
+def connect_device():
+    try:
+        cmd.runcommand('adb devices')
+        out = cmd.runcommand(f'adb connect {mobile_ip}:5555"')
+        if 'already connected' in out or 'successfully connected' in out:
+            assistant.speak('Mobile connected to home network.')
+        else:
+            assistant.speak('Unable to connect mobile device. You need to configure it manually.')
+            assistant.speak('Sir, Do you need my assitance?')
+            command = assistant.takeCommand()
+            if 'yes' in command:
+                connection_assitant()
+            else:
+                assistant.speak('Sir, Please make sure mobile is connected to the same network and try again manually.')
+    except:
+        assistant.speak('Unable to connect mobile device. You need to configure it manually.')
+        assistant.speak('Sir, Do you need my assitance?')
+        connection_assitant()
+
+def connection_assitant():
+    devices = adb.devices()
+    assistant.speak('Sir, Please connect mobile device to the laptop using a usb cable')
+    while len(devices)==0:
+        assistant.speak('Trying to fetch connected devices')
+        devices = adb.devices()
+    device = devices[0]
+    print(device)
+    assistant.speak('Getting devide ip.')
+    ipdetails = device.shell('ip addr show wlan0')
+    if 'inet' in ipdetails:
+        print(f'IP: {ipdetails}')
+        ip = mobile_ip
+        cmd.runcommand(f'adb connect {ip}:5555"')
+        assistant.speak('Mobile connected to home network.')
+    else:
+        assistant.speak('Device not responding.')
+        assistant.speak('Sir, Please make sure mobile is connected to the same network and try again manually.')
 
 def check_device_connected():
-    devices = adb.devices()
-    if len(devices) == 0:
-        quit()
-        return False
-    else:
-        return True, devices[0]
+    try:
+        devices = adb.devices()
+        if len(devices) == 0:
+            quit()
+            return False
+        else:
+            return True, devices[0]
+    except:
+        assistant.speak('Please check if your mobile is connected to the home interface.')
 
 def get_contact_number(person):
     try:
@@ -24,7 +66,6 @@ def get_contact_number(person):
             assistant.speak('I am unable to access you phone.')
             return 'none'
     except:
-        print('I am unable to access you phone.')
         return 'none'
 
 def make_a_call(contactName):
@@ -71,7 +112,7 @@ def disconnect_call():
 #     try:
 #         status, device = check_device_connected()
 #         if status:
-#             device.shell('input keyevent KEYCODE_ENDCALL')
+#             os.system('cmd /c "scrcpy"')
 #         else:
 #             print('I am unable to access you phone.')
 #     except:
