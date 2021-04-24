@@ -8,12 +8,13 @@ mobile_ip = '192.168.29.187'
 def connect_device():
     try:
         cmd_module.runcommand('adb devices')
+        cmd_module.runcommand(f'adb connect {mobile_ip}:5555"')
         out = cmd_module.runcommand(f'adb connect {mobile_ip}:5555"')
         if 'already connected' in out or 'successfully connected' in out:
             assistant.speak('Mobile connected to home network.')
         else:
             assistant.speak('Unable to connect mobile device. You need to configure it manually.')
-            assistant.speak('Sir, Do you need my assitance?')
+            assistant.speak('Sir, Do you need my assistance?')
             command = assistant.takeCommand()
             if 'yes' in command:
                 connection_assitant()

@@ -108,27 +108,11 @@ class Runner(QMainWindow):
         self.ui.movie.start()
         self.startTask()
 
-    def change_animation(self, path):
-        self.ui.label.setPixmap(path)
-        self.ui.label.update()
-        self.ui.movie = QtGui.QMovie(path) #S:\\Development\\Python\\jarvis_voiceai\\resources\\jarvis-intro-1.gif
-        self.ui.label.setMovie(self.ui.movie)
-        self.ui.movie.start()
-        self.ui.setupUi(self)
-        self.show()
-
     def startTask(self):
         startExecution.start()
 
-    def showTime(self):
-        current_time = QTime.currentTime()
-        current_date = QDate.currentDate()
-        label_time = current_time.toString('%I:%M %p')
-        label_date = current_date.toString(Qt.ISODate)
-        self.ui.date.setText(label_date)
-        self.ui.time.setText(label_time)
 
 app = QApplication(sys.argv)
 jarvis = Runner()
 jarvis.show()
-exit(app.exec_())
+sys.exit(app.exec_())

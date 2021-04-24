@@ -7,6 +7,7 @@ import psutil
 import pyautogui
 import pyjokes
 import pyttsx3
+from pyttsx3 import drivers
 import datetime
 
 import pywhatkit
@@ -85,14 +86,26 @@ def takeCommand():
     listener = sr.Recognizer()
     with sr.Microphone() as source:
         print("Listening...")
-        # listener.adjust_for_ambient_noise(source)
-        # listener.pause_threshold = 1
-        # audio = listener.listen(source, timeout=4, phrase_time_limit=7)
-        audio = listener.record(source, duration=5)
+        listener.energy_threshold = 250
+        listener.adjust_for_ambient_noise(source, duration=1)
+        listener.dynamic_energy_threshold = True
+        listener.pause_threshold = 2
+        try:
+            audio = listener.record(source, duration=None)
+            # audio = listener.listen(source, timeout=4, phrase_time_limit=7)
+        except sr.WaitTimeoutError:
+            print("speech_recognition.WaitTimeoutError")
+            pass
+            return 'none'
+
         try:
             print('Recognizing...')
             command = listener.recognize_google(audio, language='en-in')
-        except:
+        except sr.UnknownValueError:
+            print("speech_recognition.UnknownValueError")
+            return 'none'
+        except Exception as e:
+            print("Other Exception:", e)
             return 'none'
         command = command.lower()
         return command
