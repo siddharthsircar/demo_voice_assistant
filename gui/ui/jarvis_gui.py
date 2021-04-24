@@ -27,7 +27,7 @@ class Ui_jarvisgui(object):
         self.label.setScaledContents(True)
         self.label.setObjectName("label")
         self.runAssistant = QtWidgets.QPushButton(self.centralwidget)
-        self.runAssistant.setGeometry(QtCore.QRect(480, 390, 151, 41))
+        self.runAssistant.setGeometry(QtCore.QRect(310, 390, 151, 41))
         font = QtGui.QFont()
         font.setFamily("8514oem")
         font.setPointSize(12)
@@ -38,22 +38,22 @@ class Ui_jarvisgui(object):
         self.runAssistant.setCursor(QtGui.QCursor(QtCore.Qt.CrossCursor))
         self.runAssistant.setFocusPolicy(QtCore.Qt.NoFocus)
         self.runAssistant.setAutoFillBackground(False)
-        self.runAssistant.setStyleSheet("color: rgb(82, 135, 87);")
+        self.runAssistant.setStyleSheet("color: rgb(255, 255, 255);")
         self.runAssistant.setFlat(True)
         self.runAssistant.setObjectName("runAssistant")
-        self.putToSleep = QtWidgets.QPushButton(self.centralwidget)
-        self.putToSleep.setGeometry(QtCore.QRect(650, 390, 91, 41))
-        font = QtGui.QFont()
-        font.setFamily("8514oem")
-        font.setPointSize(12)
-        font.setBold(True)
-        font.setItalic(False)
-        font.setWeight(75)
-        self.putToSleep.setFont(font)
-        self.putToSleep.setCursor(QtGui.QCursor(QtCore.Qt.CrossCursor))
-        self.putToSleep.setStyleSheet("color: rgb(87, 36, 115);")
-        self.putToSleep.setFlat(True)
-        self.putToSleep.setObjectName("putToSleep")
+        # self.putToSleep = QtWidgets.QPushButton(self.centralwidget)
+        # self.putToSleep.setGeometry(QtCore.QRect(650, 390, 91, 41))
+        # font = QtGui.QFont()
+        # font.setFamily("8514oem")
+        # font.setPointSize(12)
+        # font.setBold(True)
+        # font.setItalic(False)
+        # font.setWeight(75)
+        # self.putToSleep.setFont(font)
+        # self.putToSleep.setCursor(QtGui.QCursor(QtCore.Qt.CrossCursor))
+        # self.putToSleep.setStyleSheet("color: rgb(87, 36, 115);")
+        # self.putToSleep.setFlat(True)
+        # self.putToSleep.setObjectName("putToSleep")
         self.date = QtWidgets.QTextBrowser(self.centralwidget)
         self.date.setGeometry(QtCore.QRect(20, 10, 111, 41))
         font = QtGui.QFont()
@@ -84,18 +84,18 @@ class Ui_jarvisgui(object):
     def retranslateUi(self, jarvisgui):
         _translate = QtCore.QCoreApplication.translate
         jarvisgui.setWindowTitle(_translate("jarvisgui", "J.A.R.V.I.S"))
-        self.runAssistant.setText(_translate("jarvisgui", "J.A.R.V.I.S"))
-        self.putToSleep.setText(_translate("jarvisgui", "Sleep"))
+        self.runAssistant.setText(_translate("jarvisgui", "Initiate"))
+        # self.putToSleep.setText(_translate("jarvisgui", ""))
         self.date.setHtml(_translate("jarvisgui", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Baskerville Old Face\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#ababab;\">Date:</span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#ababab;\"></span></p></body></html>"))
         self.time.setHtml(_translate("jarvisgui", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Baskerville Old Face\'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#ababab;\">Time:</span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#ababab;\"></span></p></body></html>"))
 
 
 if __name__ == "__main__":

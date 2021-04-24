@@ -1,14 +1,14 @@
 from ppadb.client import Client
 import voice_assistant as assistant
-import cmd_module as cmd
+import modules.cmd_module as cmd_module
 
 adb = Client(host='127.0.0.1', port=5037)
 mobile_ip = '192.168.29.187'
 
 def connect_device():
     try:
-        cmd.runcommand('adb devices')
-        out = cmd.runcommand(f'adb connect {mobile_ip}:5555"')
+        cmd_module.runcommand('adb devices')
+        out = cmd_module.runcommand(f'adb connect {mobile_ip}:5555"')
         if 'already connected' in out or 'successfully connected' in out:
             assistant.speak('Mobile connected to home network.')
         else:
@@ -37,7 +37,7 @@ def connection_assitant():
     if 'inet' in ipdetails:
         print(f'IP: {ipdetails}')
         ip = mobile_ip
-        cmd.runcommand(f'adb connect {ip}:5555"')
+        cmd_module.runcommand(f'adb connect {ip}:5555"')
         assistant.speak('Mobile connected to home network.')
     else:
         assistant.speak('Device not responding.')

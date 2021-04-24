@@ -12,117 +12,123 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUiType
 
-from gui.ui.jarvis_gui import Ui_jarvisgui
+from gui.jarvis_2_1 import Ui_Form
 
-if __name__ == "__main__":
-    counter = 0
-    while True:
-        permission = assistant.takeCommand()
+# if __name__ == "__main__":
+#     counter = 0
+#     while True:
+#         permission = assistant.takeCommand()
+#
+#         if 'terminate' in permission or 'i don\'t need you' in permission or 'i do not need you' in permission:
+#             sys.exit()
+#
+#         elif 'friday' in permission:
+#             counter += 1
+#             assistant.run_friday(counter)
+#
+#         elif 'wake up' in permission or 'wakeup' in permission:
+#             hour = int(datetime.datetime.now().hour)
+#
+#             if (hour >= 23 and hour<24) or (hour >= 0 and hour<9):
+#                 if (hour >= 23 and hour<24) or (hour >= 0 and hour<4):
+#                     assistant.speak('Please let me sleep sir, It\'s pretty late')
+#
+#                 elif (hour >= 4 and hour<9):
+#                     assistant.speak('Please let me sleep sir, It\'s quite early')
+#                 response = assistant.takeCommand().lower()
+#
+#                 if 'ok' in response or 'sleep' in response:
+#                     assistant.speak('Thank you.')
+#
+#                 elif 'no' in response or 'wake up' in response or 'wakeup' in response:
+#                     assistant.speak('Okay. I\'ll be up in a few seconds')
+#                     time.sleep(5)
+#                     counter += 1
+#                     assistant.run_jarvis(counter)
+#
+#         elif 'jarvis' in permission or 'are you up' in permission:
+#             counter += 1
+#             assistant.run_jarvis(counter)
 
-        if 'terminate' in permission or 'i don\'t need you' in permission or 'i do not need you' in permission:
-            sys.exit()
+# Converting py design to py class: pyuic5 -x jarvis2_0.ui -o jarvis2_0.py
 
-        elif 'friday' in permission:
-            counter += 1
-            assistant.run_friday(counter)
+class MainThread(QThread):
+    def __init__(self):
+        super(MainThread,self).__init__()
 
-        elif 'wake up' in permission or 'wakeup' in permission:
-            hour = int(datetime.datetime.now().hour)
+    def run_assistant(self):
+        self.counter = 0
+        while True:
+            self.permission = assistant.takeCommand()
 
-            if (hour >= 23 and hour<24) or (hour >= 0 and hour<9):
-                if (hour >= 23 and hour<24) or (hour >= 0 and hour<4):
-                    assistant.speak('Please let me sleep sir, It\'s pretty late')
+            if 'terminate' in self.permission or 'i don\'t need you' in self.permission or 'i do not need you' in self.permission:
+                sys.exit()
 
-                elif (hour >= 4 and hour<9):
-                    assistant.speak('Please let me sleep sir, It\'s quite early')
-                response = assistant.takeCommand().lower()
+            elif 'friday' in self.permission:
+                self.counter += 1
+                assistant.run_friday(self.counter)
 
-                if 'ok' in response or 'sleep' in response:
-                    assistant.speak('Thank you.')
+            elif 'wake up' in self.permission or 'wakeup' in self.permission:
+                hour = int(datetime.datetime.now().hour)
 
-                elif 'no' in response or 'wake up' in response or 'wakeup' in response:
-                    assistant.speak('Okay. I\'ll be up in a few seconds')
-                    time.sleep(5)
-                    counter += 1
-                    assistant.run_jarvis(counter)
+                if (hour >= 23 and hour < 24) or (hour >= 0 and hour < 9):
+                    if (hour >= 23 and hour < 24) or (hour >= 0 and hour < 4):
+                        assistant.speak('Please let me sleep sir, It\'s pretty late')
 
-        elif 'jarvis' in permission or 'are you up' in permission:
-            counter += 1
-            assistant.run_jarvis(counter)
+                    elif (hour >= 4 and hour < 9):
+                        assistant.speak('Please let me sleep sir, It\'s quite early')
+                    response = assistant.takeCommand().lower()
 
+                    if 'ok' in response or 'sleep' in response:
+                        assistant.speak('Thank you.')
 
+                    elif 'no' in response or 'wake up' in response or 'wakeup' in response:
+                        assistant.speak('Okay. I\'ll be up in a few seconds')
+                        time.sleep(5)
+                        self.counter += 1
+                        assistant.run_jarvis(self.counter)
 
-# class MainThread(QThread):
-#     def __init__(self):
-#         super(MainThread,self).__init__()
-#
-#     def run_assistant(self):
-#         counter = 0
-#         while True:
-#             permission = assistant.takeCommand()
-#
-#             if 'terminate' in permission or 'i don\'t need you' in permission or 'i do not need you' in permission:
-#                 sys.exit()
-#
-#             elif 'friday' in permission:
-#                 counter += 1
-#                 assistant.run_friday(counter)
-#
-#             elif 'wake up' in permission or 'wakeup' in permission:
-#                 hour = int(datetime.datetime.now().hour)
-#
-#                 if (hour >= 23 and hour < 24) or (hour >= 0 and hour < 9):
-#                     if (hour >= 23 and hour < 24) or (hour >= 0 and hour < 4):
-#                         assistant.speak('Please let me sleep sir, It\'s pretty late')
-#
-#                     elif (hour >= 4 and hour < 9):
-#                         assistant.speak('Please let me sleep sir, It\'s quite early')
-#                     response = assistant.takeCommand().lower()
-#
-#                     if 'ok' in response or 'sleep' in response:
-#                         assistant.speak('Thank you.')
-#
-#                     elif 'no' in response or 'wake up' in response or 'wakeup' in response:
-#                         assistant.speak('Okay. I\'ll be up in a few seconds')
-#                         time.sleep(5)
-#                         counter += 1
-#                         assistant.run_jarvis(counter)
-#
-#             elif 'jarvis' in permission or 'are you up' in permission:
-#                 counter += 1
-#                 assistant.run_jarvis(counter)
-#
-#     def run(self):
-#         self.run_assistant()
-#
-# startExecution = MainThread()
-#
-# class Runner(QMainWindow):
-#     def __init__(self):
-#         super().__init__()
-#         self.ui = Ui_jarvisgui()
-#         self.ui.setupUi(self)
-#         self.ui.runAssistant.clicked.connect(self.startTask)
-#         self.ui.putToSleep.clicked.connect(self.close())
-#
-#     def startTask(self):
-#         self.ui.movie = QtGui.QMovie('resources/jarvis-intro-1.gif')
-#         self.ui.label.setMovie(self.ui.movie)
-#         self.ui.movie.start()
-#         timer = QTimer(self)
-#         timer.timeout().connect(self.showTime)
-#         timer.start(1000)
-#         startExecution.start()
-#
-#     def showTime(self):
-#         current_time = QTime.currentTime()
-#         current_date = QDate.currentDate()
-#         label_time = current_time.toString('%I:%M %p')
-#         label_date = current_date.toString(Qt.ISODate)
-#         self.ui.date.setText(label_date)
-#         self.ui.time.setText(label_time)
-#
-# app = QApplication(sys.argv)
-# jarvis = Runner()
-# jarvis.show()
-# exit(app.exec_())
+            elif 'jarvis' in self.permission or 'are you up' in self.permission:
+                self.counter += 1
+                # self.Runner.change_animation('S:\\Development\\Python\\jarvis_voiceai\\resources\\listening.gif')
+                assistant.run_jarvis(self.counter)
+
+    def run(self):
+        self.run_assistant()
+
+startExecution = MainThread()
+
+class Runner(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.ui = Ui_Form()
+        self.ui.setupUi(self)
+        self.ui.movie = QtGui.QMovie('S:\\Development\\Python\\jarvis_voiceai\\resources\\ai_animation_2.gif')
+        self.ui.label.setMovie(self.ui.movie)
+        self.ui.movie.start()
+        self.startTask()
+
+    def change_animation(self, path):
+        self.ui.label.setPixmap(path)
+        self.ui.label.update()
+        self.ui.movie = QtGui.QMovie(path) #S:\\Development\\Python\\jarvis_voiceai\\resources\\jarvis-intro-1.gif
+        self.ui.label.setMovie(self.ui.movie)
+        self.ui.movie.start()
+        self.ui.setupUi(self)
+        self.show()
+
+    def startTask(self):
+        startExecution.start()
+
+    def showTime(self):
+        current_time = QTime.currentTime()
+        current_date = QDate.currentDate()
+        label_time = current_time.toString('%I:%M %p')
+        label_date = current_date.toString(Qt.ISODate)
+        self.ui.date.setText(label_date)
+        self.ui.time.setText(label_time)
+
+app = QApplication(sys.argv)
+jarvis = Runner()
+jarvis.show()
+exit(app.exec_())
