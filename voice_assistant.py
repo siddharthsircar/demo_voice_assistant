@@ -383,7 +383,7 @@ def assistant(counter):
                 command = takeCommand()
                 if 'yes' in command:
                     satisfied = True
-                    speak('ok sir')
+                    speak('ok')
                 elif 'no' in command or 'more' in command:
                     satisfied = False
 
@@ -395,16 +395,17 @@ def assistant(counter):
                 command = takeCommand()
                 if 'yes' in command:
                     satisfied = True
-                    speak('ok sir')
+                    speak('ok')
                 elif 'no' in command or 'more' in command:
                     satisfied = False
 
         elif 'mute' in command or 'quiet' in command or 'silent' in command:
             pyautogui.press('mute')
 
-        elif 'i\'m going out' in command or 'i am going out' in command or 'see you' in command or \
+
+        elif 'i am going to sleep' in command or 'i\'m going to sleep' in command or 'going to sleep' in command or 'i\'m going out' in command or 'i am going out' in command or 'see you' in command or \
                 ('sleep' in command and 'system' in command):
-            speak('Sir, are you leaving?')
+            speak('Sir, should I put system to sleep?')
             response = takeCommand().lower()
             if 'yes' in response or 'yup' in response or 'yeah' in response:
                 speak('Good Bye sir. Putting all systems to sleep')

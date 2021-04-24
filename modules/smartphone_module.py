@@ -22,7 +22,7 @@ def connect_device():
                 assistant.speak('Sir, Please make sure mobile is connected to the same network and try again manually.')
     except:
         assistant.speak('Unable to connect mobile device. You need to configure it manually.')
-        assistant.speak('Sir, Do you need my assitance?')
+        assistant.speak('Sir, Do you need my assistance?')
         connection_assitant()
 
 def connection_assitant():
