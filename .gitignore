@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 /pywhatkit_dbs.txt
 /*.bat
+/modules/smartphone_module.py

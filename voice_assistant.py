@@ -1,3 +1,4 @@
+import datetime
 import os
 import time
 import webbrowser
@@ -7,9 +8,6 @@ import psutil
 import pyautogui
 import pyjokes
 import pyttsx3
-from pyttsx3 import drivers
-import datetime
-
 import pywhatkit
 import speech_recognition as sr
 import speedtest
@@ -20,7 +18,13 @@ from modules.search_module import search_google, search_wiki
 
 engine = pyttsx3.init('sapi5')
 rate = engine.getProperty('rate')
-engine.setProperty('rate', rate-20)
+print(rate)
+engine.setProperty('rate', rate+10)
+listener = sr.Recognizer()
+listener.energy_threshold = 250
+listener.dynamic_energy_threshold = True
+listener.pause_threshold = 2
+
 
 # def hear_all_voices():
 #     voices = engine.getProperty('voices')
@@ -54,7 +58,10 @@ def greetMe(counter):
             speak(f'It is {startTime}')
             speak('Still, bringing all systems online')
 
-        if (hour >= 5 and hour < 23):
+        speak('Connecting mobile to the home network.')
+        smartphone_module.connect_device()
+
+        if (hour >= 3 and hour < 23):
             speak('All systems online')
 
         battery = psutil.sensors_battery()
@@ -71,11 +78,9 @@ def greetMe(counter):
         elif percentage < 20 and battery.power_plugged is False:
             speak(f'Power levels critical. Systems at {percentage} percent. Connect to a power source asap')
             speak(f'We can remain operational for {hour} hours and {minutes} minutes')
-    else:
-        speak('Hi sir. I\'m up.')
 
-    speak('Connecting mobile to the home network.')
-    smartphone_module.connect_device()
+    else:
+        speak('Welcome back sir.')
 
 
 def takeCommand():
@@ -83,29 +88,23 @@ def takeCommand():
     It takes microphone input from user
     :return: String output
     '''
-    listener = sr.Recognizer()
     with sr.Microphone() as source:
-        print("Listening...")
-        listener.energy_threshold = 250
         listener.adjust_for_ambient_noise(source, duration=1)
-        listener.dynamic_energy_threshold = True
-        listener.pause_threshold = 2
+        print("Listening...")
         try:
-            audio = listener.record(source, duration=None)
-            # audio = listener.listen(source, timeout=4, phrase_time_limit=7)
+            # audio = listener.record(source, duration=None)
+            audio = listener.listen(source, timeout=4, phrase_time_limit=5)
         except sr.WaitTimeoutError:
-            print("speech_recognition.WaitTimeoutError")
+            # print("speech_recognition.WaitTimeoutError")
             pass
             return 'none'
 
         try:
             print('Recognizing...')
             command = listener.recognize_google(audio, language='en-in')
-        except sr.UnknownValueError:
-            print("speech_recognition.UnknownValueError")
-            return 'none'
+
         except Exception as e:
-            print("Other Exception:", e)
+            # print("Other Exception:", e)
             return 'none'
         command = command.lower()
         return command
@@ -125,6 +124,9 @@ def assistant(counter):
     sleepTimer = 0
     while True:
         command = takeCommand()
+        if command == 'hey jarvis':
+            speak('Hello sir.')
+
         if 'hey' in command:
             command = command.replace('hey', '')
         if 'hi' in command:
@@ -238,6 +240,12 @@ def assistant(counter):
                 break
             else:
                 pass
+
+        elif 'i did not say anything' in command or 'i didn\'t say anything' in command:
+            speak('okay.')
+
+        elif 'shut up' in command or 'shutup' in command or 'be quiet' in command:
+            speak('okay.')
         #####
 
         ##### Information Tasks
@@ -402,7 +410,6 @@ def assistant(counter):
         elif 'mute' in command or 'quiet' in command or 'silent' in command:
             pyautogui.press('mute')
 
-
         elif 'i am going to sleep' in command or 'i\'m going to sleep' in command or 'going to sleep' in command or 'i\'m going out' in command or 'i am going out' in command or 'see you' in command or \
                 ('sleep' in command and 'system' in command):
             speak('Sir, should I put system to sleep?')
@@ -470,7 +477,11 @@ def assistant(counter):
         elif 'none' in command or command is None:
             if sleepTimer>30:
                 speak('I am going to lie down a bit.')
-                break
+                response = takeCommand()
+                if 'no'in response or 'wait' in response:
+                    pass
+                else:
+                    break
             else:
                 pass
 

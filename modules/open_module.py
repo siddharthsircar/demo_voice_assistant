@@ -43,6 +43,14 @@ def open_module(command):
         assistant.speak('opening netflix')
         webbrowser.open('www.netflix.com')
 
+    elif 'chrome' in command:
+        try:
+            assistant.speak('opening google chrome')
+            chrome_path = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+            os.startfile(chrome_path)
+        except:
+            assistant.speak('Unable to open google chrome')
+
     elif 'explorer' in command:
         assistant.speak('Opening file explorer')
         os.system('explorer')
