@@ -452,7 +452,7 @@ def assistant(counter):
 
         ##### System Tasks
         elif 'speak up' in command or 'increase the volume' in command or 'volumeup' in command or\
-                'volume up' in command:
+                'volume up' in command or 'enough' in command:
             satisfied = False
             while satisfied is False:
                 pyautogui.press('volumeup')
@@ -461,19 +461,21 @@ def assistant(counter):
                 if 'yes' in command:
                     satisfied = True
                     speak('ok')
-                elif 'no' in command or 'more' in command:
+                else:
                     satisfied = False
 
         elif 'decrease the volume' in command or 'volumedown' in command or 'volume down' in command:
             satisfied = False
+            pyautogui.press('volumedown')
+            speak('Is that okay sir?')
             while satisfied is False:
                 pyautogui.press('volumedown')
-                speak('Is that okay sir?')
                 command = takeCommand()
-                if 'yes' in command:
+                if 'yes' in command or 'this is ok' in command or 'this is okay' in command or 'okay' in command or\
+                        'ok' in command or 'enough' in command:
                     satisfied = True
                     speak('ok')
-                elif 'no' in command or 'more' in command:
+                else:
                     satisfied = False
 
         elif 'mute' in command or 'quiet' in command or 'silent' in command:
