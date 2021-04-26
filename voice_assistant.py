@@ -58,6 +58,7 @@ def greetMe(counter):
 
         elif (hour >= 23 and hour < 24) or (hour >= 0 and hour < 5):
             speak(f'It is {startTime}')
+            speak('you should be sleeping, sir.')
             speak('Still, bringing all systems online')
 
         speak('Connecting mobile to the home network.')
@@ -233,7 +234,7 @@ def assistant(counter):
             math_module.perform_calculations(command)
 
         elif 'who are you' in command:
-            speak('I am Batman')
+            speak(random.choice(['I am Batman', 'I\'m groot', 'I am jarvis', 'I, am, ironman', 'I\'m inevitable']))
 
         elif 'are you up' in command:
             speak('I am here sir.')
