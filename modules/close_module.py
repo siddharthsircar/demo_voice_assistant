@@ -3,46 +3,6 @@ import webbrowser
 import voice_assistant as assistant
 
 def close_module(command):
-    # if 'close youtube' in command:
-    #     jarvis.speak('opening youtube')
-    #     webbrowser.open('www.youtube.com')
-    #
-    # elif 'close google' in command:
-    #     jarvis.speak('opening google')
-    #     try:
-    #         jarvis.speak('What should I search for?')
-    #         query = jarvis.takeCommand()
-    #         if 'none' in query or query is None:
-    #             webbrowser.open('www.google.com')
-    #         elif query is not None:
-    #             jarvis.search_google(query)
-    #     except:
-    #         webbrowser.open('www.google.com')
-    #
-    # elif 'close mail' in command:
-    #     jarvis.speak('opening gmail')
-    #     webbrowser.open('www.gmail.com')
-    #
-    # elif 'close whatsapp' in command:
-    #     jarvis.speak('opening whatsapp')
-    #     webbrowser.open('https://web.whatsapp.com/')
-    #
-    # elif 'close facebook' in command:
-    #     jarvis.speak('opening facebook')
-    #     webbrowser.open('www.facebook.com')
-    #
-    # elif 'close stackoverflow' in command or 'close stack overflow' in command:
-    #     jarvis.speak('opening stackoverflow')
-    #     webbrowser.open('www.stackoverflow.com')
-    #
-    # elif 'close prime video' in command or 'close primevideo' in command:
-    #     jarvis.speak('opening prime video')
-    #     webbrowser.open('www.primevideo.com')
-    #
-    # elif 'close netflix' in command:
-    #     jarvis.speak('opening netflix')
-    #     webbrowser.open('www.netflix.com')
-
     if 'explorer' in command:
         assistant.speak('Closing file explorer')
         os.system('taskkill /f /im explorer')

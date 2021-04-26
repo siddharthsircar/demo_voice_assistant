@@ -1,3 +1,5 @@
+import webbrowser
+
 import pywhatkit
 import wikipedia
 
@@ -10,6 +12,14 @@ def search_google(query):
         pywhatkit.search(query)
     except:
         assistant.speak(f'Could not find information on {query}')
+
+def search_youtube(query):
+    try:
+        assistant.speak(f'Searching for {query}')
+        webbrowser.open(f'https://www.youtube.com/results?search_query={query}')
+    except:
+        assistant.speak(f'Could not find information on {query}')
+
 
 def search_wiki(query):
     assistant.speak(f'Asking Wiki about {query}')

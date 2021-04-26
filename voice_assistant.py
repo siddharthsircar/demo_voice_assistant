@@ -1,5 +1,6 @@
 import datetime
 import os
+import random
 import time
 import webbrowser
 
@@ -12,16 +13,17 @@ import pywhatkit
 import speech_recognition as sr
 import speedtest
 
+import alarm_module
 from modules import news_module, open_module, math_module, close_module, location_module, \
     weather_module, how_to_module, gratitude_module, movies_module, smartphone_module
-from modules.search_module import search_google, search_wiki
+from modules.search_module import search_google, search_wiki, search_youtube
 
 engine = pyttsx3.init('sapi5')
 rate = engine.getProperty('rate')
 print(rate)
-engine.setProperty('rate', rate+10)
+engine.setProperty('rate', rate-9)
 listener = sr.Recognizer()
-listener.energy_threshold = 250
+listener.energy_threshold = 100
 listener.dynamic_energy_threshold = True
 listener.pause_threshold = 2
 
@@ -73,11 +75,11 @@ def greetMe(counter):
         minutes = seconds // 60
         seconds %= 60
         if (percentage >= 20 and percentage < 50) and battery.power_plugged is False:
-            speak(f'Power levels low. Systems at {percentage} percent. Please connect to a power source')
+            speak(f'Power levels low. System at {percentage} percent. Please connect to a power source')
             speak(f'We can remain operational for {hour} hours and {minutes} minutes')
         elif percentage < 20 and battery.power_plugged is False:
-            speak(f'Power levels critical. Systems at {percentage} percent. Connect to a power source asap')
-            speak(f'We can remain operational for {hour} hours and {minutes} minutes')
+            speak(f'Power levels critical. System at {percentage} percent. Connect to a power source asap')
+            speak(f'We can remain operational for {hour} hours and {minutes} minutes only')
 
     else:
         speak('Welcome back sir.')
@@ -89,11 +91,11 @@ def takeCommand():
     :return: String output
     '''
     with sr.Microphone() as source:
-        listener.adjust_for_ambient_noise(source, duration=1)
+        listener.adjust_for_ambient_noise(source, duration=0.2)
         print("Listening...")
         try:
             # audio = listener.record(source, duration=None)
-            audio = listener.listen(source, timeout=4, phrase_time_limit=5)
+            audio = listener.listen(source, timeout=4, phrase_time_limit=7)
         except sr.WaitTimeoutError:
             # print("speech_recognition.WaitTimeoutError")
             pass
@@ -106,7 +108,7 @@ def takeCommand():
         except Exception as e:
             # print("Other Exception:", e)
             return 'none'
-        command = command.lower()
+        command = command.lower().strip()
         return command
 
 def run_jarvis(counter):
@@ -122,9 +124,34 @@ def run_friday(counter):
 def assistant(counter):
     greetMe(counter)
     sleepTimer = 0
+    awake_time = None
+    hour = ''
+    minutes = ''
     while True:
+        if awake_time is not None:
+            print('Alarm Time: ' + awake_time)
+            while True:
+                if hour == datetime.datetime.now().hour and minutes == datetime.datetime.now().minute:
+                    speak('Sir, please wakeup!')
+                    wake_stat = takeCommand()
+                    if 'okay' in wake_stat or 'i am up' in wake_stat or 'i\'m up' in wake_stat:
+                        speak('Okay sir.')
+                        awake_time = None
+                        hour = ''
+                        minutes = ''
+                        break
+                    else:
+                        pass
+                elif hour == datetime.datetime.now().hour and datetime.datetime.now().minute == minutes + 1:
+                    awake_time = None
+                    hour = ''
+                    minutes = ''
+                else:
+                    break
+
         command = takeCommand()
-        if command == 'hey jarvis':
+
+        if command.strip() == 'hey jarvis':
             speak('Hello sir.')
 
         if 'hey' in command:
@@ -154,6 +181,11 @@ def assistant(counter):
             command = takeCommand()
             movies_module.run_movie(command)
 
+        elif 'play work out songs' in command or 'play workout songs' in command or 'workout' in command or\
+            'work out' in command:
+            speak('Searching for workout songs on youtube')
+            search_youtube('workout songs')
+
         elif 'play' in command:
             song = command.replace('play', '')
             speak('Playing' + song)
@@ -161,9 +193,9 @@ def assistant(counter):
 
         elif 'screenshot' in command or 'screen shot' in command or 'capture the screen' in command:
             try:
-                time = datetime.datetime.now().time().strftime('%H_%M_%S')
-                print(time)
-                imgName = 'Screenshot_'+time+'.jpg'
+                cur_time = datetime.datetime.now().time().strftime('%H_%M_%S')
+                print(cur_time)
+                imgName = 'Screenshot_'+cur_time+'.jpg'
                 picturesDir = 'C:\\Users\\Siddharth Sircar\\Pictures\\Screenshots\\'
                 speak('Please stay on the screen for a while longer.')
                 img = pyautogui.screenshot()
@@ -176,6 +208,21 @@ def assistant(counter):
 
 
         ##### Personal commands
+        elif 'set an alarm for' in command or 'wake me up at' in command:
+            alarm_time = ''
+            try:
+                if 'set an alarm for' in command:
+                    alarm_time = command.split('for ')[1].strip()
+                if 'wake me up at' in command:
+                    alarm_time = command.split('at ')[1].strip()
+                alarm_time = alarm_time.replace('.', '')
+                alarm_time = alarm_time.upper()
+                # print(alarm_module.set_alarm(awake_time))
+                awake_time, hour, minutes = alarm_module.set_alarm(alarm_time)
+                speak(f'Alarm set for {alarm_time}')
+            except:
+                speak('Unable to set the alarm sir.')
+
         elif 'do some calculations' in command:
             speak('what do you wish to calculate?')
             command = takeCommand().lower()
@@ -198,7 +245,7 @@ def assistant(counter):
 
         elif 'how are you' in command:
             speak('I have been good. Thank you for asking.')
-            speak('How have you been lately?')
+            speak(random.choice(['How have you been lately?', 'How are you?']))
 
         elif 'i am good' in command or 'i am also good' in command or\
             'i am great' in command or 'i am amazing' in command or 'i have been good' in command or\
@@ -219,11 +266,12 @@ def assistant(counter):
         elif 'you are funny' in command or 'you\'re funny' in command or\
                 'you are really funny' in command or 'you\'re really funny' in command or\
             'you really funny' in command or 'very funny' in command:
-            speak('I try sir.' or 'People call me Mr. Hilarious')
+            response_dict = ['I try sir.' , 'People call me Mr. Hilarious']
+            speak(random.choice(response_dict))
 
         elif 'i didn\'t sleep' in command:
-            speak('One should have sleep for an average of 6 or 7 hours')
-            speak('you should take care of your health sir!')
+            response_dict = ['One should have sleep for an average of 6 or 7 hours', 'you should take care of your health sir!']
+            speak(random.choice(response_dict))
 
         elif 'you can sleep' in command or 'you may go to sleep' in command or 'go to sleep' in command:
             speak('Okay sir, Let me know when you need me.')
@@ -250,10 +298,10 @@ def assistant(counter):
 
         ##### Information Tasks
         elif 'time' in command:
-            time = datetime.datetime.now().strftime('%I:%M %p')
-            speak(f'It\'s {time}')
-            hour = int(datetime.datetime.now().hour)
-            if hour >= 0 and hour < 4:
+            cur_time = datetime.datetime.now().strftime('%I:%M %p')
+            speak(f'It\'s {cur_time}')
+            cur_hour = int(datetime.datetime.now().hour)
+            if cur_hour >= 0 and cur_hour < 4:
                 speak('you should go to sleep now sir. It\'s pretty late')
 
         elif 'date' in command:
@@ -290,6 +338,12 @@ def assistant(counter):
             day = datetime.datetime.today().weekday()
             speak(f'It\'s {day_name[day]}')
 
+        elif "where is" in command:
+            command = command.replace('where is', '')
+            location = command
+            speak(f'Locating {location}')
+            webbrowser.open(f'https://www.google.com/maps/place/{location}')
+
         elif 'who is' in command:
             query = command.replace('who is', '')
             search_wiki(query)
@@ -298,36 +352,51 @@ def assistant(counter):
             query = command.replace('tell me about', '')
             search_wiki(query)
 
+        elif 'how far are we from' in command:
+            try:
+                query = command.replace('how far are we from', '')
+                search_query = (f'distance from {query.strip()}')
+                search_google(search_query)
+            except:
+                speak('I did not get you')
+
         elif 'search google' in command:
             try:
                 speak('What should I search for?')
                 query = takeCommand()
                 search_google(query)
             except:
-                speak('Could you please repeat')
-                query = takeCommand()
-                search_google(query)
+                speak('I did not get you')
+
+        elif 'search youtube' in command:
+            try:
+                speak('What should I search for?')
+                query = takeCommand().strip()
+                search_youtube(query)
+            except:
+                speak('I did not get you')
 
         elif 'run a search on' in command or 'run search on' in command or 'search on' in command:
             try:
                 query = command.replace('run a search on', '')
                 search_google(query)
             except:
-                speak('What should I search for?')
-                query = takeCommand()
-                search_google(query)
+                speak('I did not get you')
 
         elif 'i want to learn' in command or 'learn' in command or 'study' in command or\
             'find courses on' in command:
-            query=''
+            # query=''
             if 'i want to' in command:
-                query = command.replace('i want to','')
+                command = command.replace('i want to','')
             if 'learn' in command:
-                query = command.replace('learn', '')
+                command = command.replace('learn', '')
             if 'study' in command:
-                query = command.replace('study', '')
+                command = command.replace('study', '')
             if 'find courses on' in command:
-                query = command.replace('find courses on', '')
+                command = command.replace('find courses on', '')
+            if 'courses on' in command:
+                command = command.replace('courses on', '')
+            query = command
             search_google(f'courses on {query}')
             webbrowser.open(f'https://www.youtube.com/results?search_query={query}')
 
@@ -452,14 +521,14 @@ def assistant(counter):
             elif (percentage>=95 and percentage<100) and battery.power_plugged:
                 speak('We have enough power, you can disconnect the power source')
             if (percentage >=40 and percentage <70) and battery.power_plugged is False:
-                speak('We should connect to a power source')
+                speak('We should connect a power source')
                 speak(f'We can remain operational for {hour} hours and {minutes} minutes')
             elif (percentage >=20 and percentage <40) and battery.power_plugged is False:
-                speak('Power levels low. Please connect to a power source')
-                speak(f'We can remain operational for {hour} hours and {minutes} minutes')
+                speak('Power levels low. Please connect a power source')
+                speak(f'We can remain operational for {hour} hours and {minutes} minutes only')
             elif percentage <20 and battery.power_plugged is False:
-                speak('Power levels critical. Connect to a power source asap')
-                speak(f'We can remain operational for {hour} hours and {minutes} minutes')
+                speak('Power levels critical. Connect a power source asap')
+                speak(f'We can remain operational for {hour} hours and {minutes} minutes only')
 
         elif 'internet speed' in command:
             speak('Calculating internet speed.')

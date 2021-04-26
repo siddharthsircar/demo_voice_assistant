@@ -130,3 +130,6 @@ dmypy.json
 /pywhatkit_dbs.txt
 /*.bat
 /modules/smartphone_module.py
+/modules/google_module.py
+/gui/pywhatkit_dbs.txt
+/credentials.json

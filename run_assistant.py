@@ -58,6 +58,7 @@ class MainThread(QThread):
 
     def run_assistant(self):
         self.counter = 0
+        assistant.speak('Greetings, I am Jarvis.')
         while True:
             self.permission = assistant.takeCommand()
 

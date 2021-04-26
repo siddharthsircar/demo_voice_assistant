@@ -1,4 +1,5 @@
 import os
+import subprocess
 import webbrowser
 import voice_assistant as assistant
 
@@ -19,7 +20,7 @@ def open_module(command):
         except:
             webbrowser.open('www.google.com')
 
-    elif 'open mail' in command:
+    elif 'open gmail' in command:
         assistant.speak('opening gmail')
         webbrowser.open('www.gmail.com')
 
@@ -51,11 +52,15 @@ def open_module(command):
         except:
             assistant.speak('Unable to open google chrome')
 
+    elif 'open calculator' in command:
+        assistant.speak('Opening calculator')
+        subprocess.Popen("C:\\Windows\\System32\\calc.exe")
+
     elif 'explorer' in command:
         assistant.speak('Opening file explorer')
         os.system('explorer')
 
-    elif 'open vs code' in command or 'i want to work on flutter' in command:
+    elif 'open vs code' in command or 'i want to work on flutter' in command or 'open code' in command:
         try:
             vsCodePath = 'S:\\Development\\Tools\\Microsoft VS Code\\Code.exe'
             assistant.speak('Opening VS Code')
@@ -79,7 +84,8 @@ def open_module(command):
         except:
             assistant.speak('Could not find Sublime text in given location')
 
-    elif 'open python ide' in command or 'i want to work on python' in command or 'python' in command:
+    elif 'open python ide' in command or 'i want to work on python' in command or 'python' in command or 'create a new python project' in command\
+            or 'feel like working on python' in command:
         try:
             pycharmPath = 'S:\\Development\\Tools\\PyCharm Community Edition 2021.1\\bin\\pycharm64.exe'
             assistant.speak('Opening PyCharm')

@@ -1,3 +1,4 @@
+import random
 import sys
 
 import voice_assistant as assistant
@@ -41,5 +42,6 @@ def gratitude_module(command):
         return 'sleep'
 
     elif 'thank you' in command or 'thankyou' in command:
-        assistant.speak('Glad to help!')
+        response_dict = ['glad to help sir', 'you\'re being too formal sir', 'anytime sir', 'always at your service sir']
+        assistant.speak(random.choice(response_dict))
         return 'none'
